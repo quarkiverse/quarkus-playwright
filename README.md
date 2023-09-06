@@ -4,6 +4,10 @@
 
 Easily create effective cross-browsers e2e tests for your Quarkus web-app using Playwright (Qute, Quinoa, Renarde, Web-Bundler, ...):
 
+All the information you need to use Quarkus Playwright is in the [user documentation](https://docs.quarkiverse.io/quarkus-playwright/dev/).
+
+## Usage
+
 ````java
 @QuarkusTest
 @WithPlaywright
@@ -35,8 +39,7 @@ public class WithDefaultPlaywrightTest {
 ````
 
 Debug your tests with the Playwright inspector `@WithPlaywright(debug=true)`:
-![Debug](playwright-debug.gif)
 
-All the information you need to use Quarkus Playwright is in the [user documentation](https://docs.quarkiverse.io/quarkus-playwright/dev/).
+![Debug](playwright-debug.gif)
 
 
