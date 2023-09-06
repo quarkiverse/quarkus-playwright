@@ -1,19 +1,21 @@
 package org.acme;
 
+import static io.quarkiverse.playwright.WithPlaywright.Browser.FIREFOX;
+
+import java.net.URL;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.ElementHandle;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
+
 import io.quarkiverse.playwright.InjectPlaywright;
 import io.quarkiverse.playwright.WithPlaywright;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.net.URL;
-
-import static io.quarkiverse.playwright.WithPlaywright.Browser.FIREFOX;
 
 @QuarkusTest
 @WithPlaywright(browser = FIREFOX)
