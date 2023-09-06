@@ -1,0 +1,59 @@
+= Quarkus Playwright
+
+include::./includes/attributes.adoc[]
+
+Easily create effective cross-browsers e2e tests for your Quarkus web-app using Playwright (Qute, Quinoa, Renarde, Web-Bundler, ...):
+
+== Installation
+
+If you want to use this extension, you need to add the `io.quarkiverse.playwright:quarkus-playwright` extension first to your build file.
+
+For instance, with Maven, add the following dependency to your POM file:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.playwright</groupId>
+    <artifactId>quarkus-playwright</artifactId>
+    <version>{project-version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+== Usage
+
+[source,java]
+----
+@QuarkusTest
+@WithPlaywright
+public class WithDefaultPlaywrightTest {
+
+    @InjectPlaywright
+    BrowserContext context;
+
+    @TestHTTPResource("/")
+    URL index;
+
+    @Test
+    public void testIndex() {
+        final Page page = context.newPage();
+        Response response = page.navigate(index.toString());
+        Assertions.assertEquals("OK", response.statusText());
+
+        page.waitForLoadState();
+
+        String title = page.title();
+        Assertions.assertEquals("My Awesome App", title);
+
+        // Make sure the web app is loaded and hits the backend
+        final ElementHandle quinoaEl = page.waitForSelector(".toast-body.received");
+        String greeting = quinoaEl.innerText();
+        Assertions.assertEquals("Hello from RESTEasy Reactive", greeting);
+    }
+}
+----
+
+Use the annotation `@WithPlaywright()` to change the browser (Chromium, Firefox, Webkit), headless, enable debug, logs and other options.
+
+
+include::includes/quarkus-playwright.adoc[leveloffset=+1, opts=optional]

@@ -1,0 +1,13 @@
+name: Playwright
+description: Playwright enables reliable end-to-end testing for modern web apps.
+metadata:
+  type: test
+  keywords:
+    - testing
+    - e2e
+    - end-to-end
+    - playwright
+  guide: https://quarkiverse.github.io/quarkiverse-docs/playwright/dev/ # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
+  categories:
+    - "test"
+  status: "preview"

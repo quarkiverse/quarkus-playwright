@@ -1,0 +1,5 @@
+name: quarkus-playwright
+title: Quarkus Playwright
+version: dev
+nav:
+  - modules/ROOT/nav.adoc
