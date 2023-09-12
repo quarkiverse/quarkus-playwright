@@ -8,6 +8,7 @@ metadata:
     - end-to-end
     - playwright
   guide: https://quarkiverse.github.io/quarkiverse-docs/playwright/dev/ # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
+  icon-url: "https://playwright.dev/java/img/playwright-logo.svg"
   categories:
     - "test"
   status: "preview"
