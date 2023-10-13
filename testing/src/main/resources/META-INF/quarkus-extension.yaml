@@ -9,5 +9,5 @@ metadata:
     - playwright
   guide: https://quarkiverse.github.io/quarkiverse-docs/playwright/dev/ # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
   categories:
-    - "test"
+    - "testing"
   status: "preview"
