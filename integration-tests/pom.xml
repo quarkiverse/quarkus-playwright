@@ -16,7 +16,7 @@
         <dependency>
             <groupId>io.quarkiverse.web-bundler</groupId>
             <artifactId>quarkus-web-bundler</artifactId>
-            <version>1.1.2</version>
+            <version>1.1.5</version>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.quteserverpages</groupId>
