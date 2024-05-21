@@ -11,4 +11,4 @@ metadata:
   icon-url: "https://playwright.dev/java/img/playwright-logo.svg"
   categories:
     - "testing"
-  status: "preview"
+  status: "stable"
