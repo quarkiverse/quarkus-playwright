@@ -1,9 +1,12 @@
 package io.quarkiverse.playwright;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -51,7 +54,12 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
                 .setArgs(Arrays.asList(this.options.args()));
         this.playwrightBrowser = browser(playwright, this.options.browser()).launch(
                 launchOptions);
-        this.playwrightContext = playwrightBrowser.newContext();
+
+        final Browser.NewContextOptions contextOptions = new Browser.NewContextOptions();
+        if (StringUtils.isNotBlank(this.options.recordVideoDir())) {
+            contextOptions.setRecordVideoDir(Paths.get(this.options.recordVideoDir()));
+        }
+        this.playwrightContext = playwrightBrowser.newContext(contextOptions);
         return Collections.emptyMap();
     }
 
@@ -69,6 +77,10 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
 
     @Override
     public void stop() {
+        if (this.playwrightContext != null) {
+            this.playwrightContext.close();
+            this.playwrightContext = null;
+        }
         if (playwright != null) {
             playwright.close();
             playwright = null;

@@ -53,6 +53,11 @@ public @interface WithPlaywright {
     double slowMo() default 0;
 
     /**
+     * Enables video recording for all pages into the specified directory. If not specified videos are not recorded.
+     */
+    String recordVideoDir() default "";
+
+    /**
      * Args for use to launch the browser
      */
     String[] args() default { "--disable-gpu" };
