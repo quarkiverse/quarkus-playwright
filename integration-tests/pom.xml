@@ -9,7 +9,7 @@
     <artifactId>quarkus-playwright-integration-tests</artifactId>
     <name>Quarkus Playwright - Integration Tests</name>
     <properties>
-        <quarkus.version>3.10.1</quarkus.version>
+        <quarkus.version>3.13.2</quarkus.version>
     </properties>
     <dependencyManagement>
         <dependencies>
