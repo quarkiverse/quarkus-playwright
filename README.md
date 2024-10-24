@@ -63,6 +63,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://melloware.com"><img src="https://avatars.githubusercontent.com/u/4399574?v=4?s=100" width="100px;" alt="Melloware"/><br /><sub><b>Melloware</b></sub></a><br /><a href="#maintenance-melloware" title="Maintenance">🚧</a> <a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=melloware" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kucharzyk"><img src="https://avatars.githubusercontent.com/u/5682894?v=4?s=100" width="100px;" alt="Tomasz Kucharzyk"/><br /><sub><b>Tomasz Kucharzyk</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=kucharzyk" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://gjstewart.net"><img src="https://avatars.githubusercontent.com/u/7083701?v=4?s=100" width="100px;" alt="Greg Stewart"/><br /><sub><b>Greg Stewart</b></sub></a><br /><a href="#ideas-GregJohnStewart" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thomaswiradikusuma"><img src="https://avatars.githubusercontent.com/u/169544234?v=4?s=100" width="100px;" alt="thomaswiradikusuma"/><br /><sub><b>thomaswiradikusuma</b></sub></a><br /><a href="#ideas-thomaswiradikusuma" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
