@@ -8,9 +8,6 @@
     </parent>
     <artifactId>quarkus-playwright-integration-tests</artifactId>
     <name>Quarkus Playwright - Integration Tests</name>
-    <properties>
-        <quarkus.version>3.10.1</quarkus.version>
-    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -30,7 +27,7 @@
         <dependency>
             <groupId>io.quarkiverse.web-bundler</groupId>
             <artifactId>quarkus-web-bundler</artifactId>
-            <version>1.5.0.CR2</version>
+            <version>1.7.3</version>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.qute.web</groupId>
@@ -75,6 +72,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
@@ -95,12 +93,14 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skipTests>${native.surefire.skip}</skipTests>
                         </configuration>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <executions>
                             <execution>
