@@ -15,7 +15,16 @@ Easily create effective cross-browsers e2e tests for your Quarkus web-app using 
 All the information you need to use Quarkus Playwright is in the [user documentation](https://docs.quarkiverse.io/quarkus-playwright/dev/).
 
 ## Usage
-
+Add to pom.xml:
+```xml
+<dependency>
+    <groupId>io.quarkiverse.playwright</groupId>
+    <artifactId>quarkus-playwright</artifactId>
+    <version>${playwright.version}</version>
+    <scope>test</scope>
+</dependency>
+```
+Write your tests:
 ````java
 @QuarkusTest
 @WithPlaywright
