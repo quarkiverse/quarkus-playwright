@@ -64,15 +64,11 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
     }
 
     private static BrowserType browser(Playwright playwright, WithPlaywright.Browser browser) {
-        switch (browser) {
-            case CHROMIUM:
-                return playwright.chromium();
-            case FIREFOX:
-                return playwright.firefox();
-            case WEBKIT:
-                return playwright.webkit();
-        }
-        return playwright.chromium();
+        return switch (browser) {
+            case FIREFOX -> playwright.firefox();
+            case WEBKIT -> playwright.webkit();
+            default -> playwright.chromium();
+        };
     }
 
     @Override
