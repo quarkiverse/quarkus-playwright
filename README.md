@@ -61,6 +61,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ia3andy"><img src="https://avatars.githubusercontent.com/u/2223984?v=4?s=100" width="100px;" alt="Andy Damevin"/><br /><sub><b>Andy Damevin</b></sub></a><br /><a href="#maintenance-ia3andy" title="Maintenance">🚧</a> <a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=ia3andy" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://melloware.com"><img src="https://avatars.githubusercontent.com/u/4399574?v=4?s=100" width="100px;" alt="Melloware"/><br /><sub><b>Melloware</b></sub></a><br /><a href="#maintenance-melloware" title="Maintenance">🚧</a> <a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=melloware" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kucharzyk"><img src="https://avatars.githubusercontent.com/u/5682894?v=4?s=100" width="100px;" alt="Tomasz Kucharzyk"/><br /><sub><b>Tomasz Kucharzyk</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=kucharzyk" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
