@@ -35,6 +35,15 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "GregJohnStewart",
+      "name": "Greg Stewart",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7083701?v=4",
+      "profile": "http://gjstewart.net",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
