@@ -76,6 +76,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://developers.redhat.com/author/eric-deandrea"><img src="https://avatars.githubusercontent.com/u/363447?v=4?s=100" width="100px;" alt="Eric Deandrea"/><br /><sub><b>Eric Deandrea</b></sub></a><br /><a href="#ideas-edeandrea" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://maxsonaraujo.miwteam.com.br/pt-BR"><img src="https://avatars.githubusercontent.com/u/91495720?v=4?s=100" width="100px;" alt="Maxson Araújo"/><br /><sub><b>Maxson Araújo</b></sub></a><br /><a href="#ideas-maxsonaraujo" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rmanibus"><img src="https://avatars.githubusercontent.com/u/10419172?v=4?s=100" width="100px;" alt="Loïc Hermann"/><br /><sub><b>Loïc Hermann</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=rmanibus" title="Tests">⚠️</a></td>
+    </tr>
   </tbody>
 </table>
 

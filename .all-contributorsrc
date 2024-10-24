@@ -71,6 +71,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "rmanibus",
+      "name": "Loïc Hermann",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10419172?v=4",
+      "profile": "https://github.com/rmanibus",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
