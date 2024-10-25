@@ -6,24 +6,16 @@
         <artifactId>quarkus-playwright-parent</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-    <artifactId>quarkus-playwright</artifactId>
+    <artifactId>quarkus-playwright-test</artifactId>
     <name>Quarkus Playwright - Testing</name>
     <dependencies>
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
-            <version>${playright.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.opentest4j</groupId>
-                    <artifactId>opentest4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>driver-bundle</artifactId>
-            <version>${playright.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

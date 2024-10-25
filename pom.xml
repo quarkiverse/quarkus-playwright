@@ -11,15 +11,16 @@
     <version>999-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Quarkus Playwright - Parent</name>
+    <description>Playwright enables reliable end-to-end testing for modern web apps</description>
     <modules>
-        <!--<module>deployment</module>-->
+        <module>deployment</module>
+        <module>runtime</module>
         <module>testing</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:quarkiverse/quarkus-playwright.git</connection>
         <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-playwright.git</developerConnection>
         <url>https://github.com/quarkiverse/quarkus-playwright</url>
-        <tag>HEAD</tag>
     </scm>
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -38,6 +39,22 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.microsoft.playwright</groupId>
+                <artifactId>playwright</artifactId>
+                <version>${playright.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.opentest4j</groupId>
+                        <artifactId>opentest4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.playwright</groupId>
+                <artifactId>driver-bundle</artifactId>
+                <version>${playright.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -49,19 +66,16 @@
                     <version>${quarkus.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>io.quarkus</groupId>
-                    <artifactId>quarkus-config-doc-maven-plugin</artifactId>
-                    <version>${version.quarkus}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler-plugin.version}</version>
                     <configuration>
-                        <compilerArgs>
-                            <arg>-parameters</arg>
-                        </compilerArgs>
+                        <parameters>true</parameters>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-config-doc-maven-plugin</artifactId>
+                    <version>${quarkus.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
