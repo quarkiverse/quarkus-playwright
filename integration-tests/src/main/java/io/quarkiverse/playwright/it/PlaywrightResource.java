@@ -24,6 +24,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
+import org.jboss.logging.Logger;
+
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
@@ -32,22 +34,25 @@ import com.microsoft.playwright.Playwright;
 @Path("/playwright")
 @ApplicationScoped
 public class PlaywrightResource {
-    // add some rest methods here
+
+    private static final Logger log = Logger.getLogger(PlaywrightResource.class);
 
     @GET
     public String google() {
-        String pageTitle = "Hello playwright";
+        String pageTitle;
         final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                 .setHeadless(true)
                 .setChromiumSandbox(false)
                 .setChannel("")
                 .setArgs(List.of("--disable-gpu"));
         final Map<String, String> env = new HashMap<>(System.getenv());
+        env.put("DEBUG", "pw:api");
         try (Playwright playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env))) {
             try (Browser browser = playwright.chromium().launch(launchOptions)) {
                 Page page = browser.newPage();
                 page.navigate("https://www.google.com/");
                 pageTitle = page.title();
+                log.infof("Page title: %s", pageTitle);
             }
         }
         return pageTitle;

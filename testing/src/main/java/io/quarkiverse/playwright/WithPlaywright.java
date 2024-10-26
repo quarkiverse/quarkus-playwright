@@ -7,65 +7,123 @@ import java.lang.annotation.Target;
 
 import io.quarkus.test.common.QuarkusTestResource;
 
+/**
+ * Annotation to configure and enable Playwright for Quarkus tests.
+ * <p>
+ * This annotation sets up a Playwright testing environment with options for
+ * browser selection, debugging, and configuration of other Playwright features.
+ * It is applied at the class level and managed by {@link QuarkusPlaywrightManager}.
+ * </p>
+ *
+ * <p>
+ * Usage example:
+ *
+ * <pre>
+ * {@code
+ * @WithPlaywright(browser = Browser.FIREFOX, headless = false, verbose = true)
+ * public class PlaywrightTest {
+ *     // Test code here
+ * }
+ * }
+ * </pre>
+ * </p>
+ *
+ * @see io.quarkus.test.common.QuarkusTestResource
+ * @see QuarkusPlaywrightManager
+ * @since 1.0
+ */
 @QuarkusTestResource(QuarkusPlaywrightManager.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME) // Annotation is retained at runtime for test setup.
+@Target(ElementType.TYPE) // Applied only at the class level.
 public @interface WithPlaywright {
 
     /**
-     * Browser to use
+     * Specifies the browser to use for Playwright tests.
+     * <p>
+     * Defaults to {@link Browser#CHROMIUM}.
+     * </p>
      */
     Browser browser() default Browser.CHROMIUM;
 
     /**
-     * Enable playwright logs
+     * Enables Playwright verbose logging.
+     * <p>
+     * Set to {@code true} to enable detailed logging, useful for debugging.
+     * </p>
      */
     boolean verbose() default false;
 
     /**
-     * Enable Playwright Debug Inspector
+     * Enables the Playwright Debug Inspector for debugging tests.
+     * <p>
+     * Use {@code true} to launch the inspector, which pauses tests for interactive debugging.
+     * </p>
      */
     boolean debug() default false;
 
     /**
-     * Browser distribution channel. Supported values are "chrome", "chrome-beta", "chrome-dev", "chrome-canary", "msedge",
-     * "msedge-beta", "msedge-dev", "msedge-canary". Read more about using <a
-     * href="https://playwright.dev/java/docs/browsers#google-chrome--microsoft-edge">Google Chrome and Microsoft Edge</a>.
+     * Specifies the distribution channel of the browser to use, such as "chrome" or "msedge".
+     * <p>
+     * Supported values include "chrome", "chrome-beta", "chrome-dev", "chrome-canary", "msedge",
+     * "msedge-beta", "msedge-dev", and "msedge-canary".
+     * </p>
+     * <p>
+     * Refer to the <a href="https://playwright.dev/java/docs/browsers#google-chrome--microsoft-edge">
+     * Playwright documentation</a> for additional details on using these channels.
+     * </p>
      */
     String channel() default "";
 
     /**
-     * Enable Chromium sandboxing. Defaults to {@code false}.
+     * Enables sandboxing for Chromium-based browsers.
+     * <p>
+     * Defaults to {@code false} for compatibility. Set to {@code true} to enable sandboxing if supported.
+     * </p>
      */
     boolean chromiumSandbox() default false;
 
     /**
-     * Whether to run browser in headless mode. More details for <a
-     * href="https://developers.google.com/web/updates/2017/04/headless-chrome">Chromium</a> and <a
-     * href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Headless_mode">Firefox</a>. Defaults to {@code true}
-     * unless the {@code devtools} option is {@code true}.
+     * Runs the browser in headless mode, which is suitable for CI environments.
+     * <p>
+     * Defaults to {@code true} unless the {@code devtools} option is enabled.
+     * </p>
+     * <p>
+     * See more about headless mode in <a href="https://developers.google.com/web/updates/2017/04/headless-chrome">
+     * Chromium</a> and <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Headless_mode">Firefox</a>.
+     * </p>
      */
     boolean headless() default true;
 
     /**
-     * Slows down Playwright operations by the specified amount of milliseconds. Useful so that you can see what is going on.
+     * Slows down Playwright operations by the specified number of milliseconds.
+     * <p>
+     * This is useful for observing browser interactions more clearly during tests.
+     * </p>
      */
     double slowMo() default 0;
 
     /**
-     * Enables video recording for all pages into the specified directory. If not specified videos are not recorded.
+     * Specifies the directory to store video recordings of all pages.
+     * <p>
+     * If not set, video recording is disabled.
+     * </p>
      */
     String recordVideoDir() default "";
 
     /**
-     * Args for use to launch the browser
+     * Specifies command-line arguments to use when launching the browser.
+     * <p>
+     * Defaults to disabling GPU with {@code "--disable-gpu"}.
+     * </p>
      */
     String[] args() default { "--disable-gpu" };
 
+    /**
+     * Enum representing the supported browsers for Playwright testing.
+     */
     enum Browser {
-        CHROMIUM,
-        FIREFOX,
-        WEBKIT
+        CHROMIUM, // Google Chrome and other Chromium-based browsers.
+        FIREFOX, // Mozilla Firefox browser.
+        WEBKIT // WebKit browser, primarily for Safari compatibility.
     }
-
 }
