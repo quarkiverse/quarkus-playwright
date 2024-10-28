@@ -21,11 +21,11 @@ All the information you need to use Quarkus Playwright is in the [user documenta
 The primary use case for Playwright is integration with `@QuarkusTest` for end-to-end testing of your application. You can easily create effective cross-browser end-to-end tests for your Quarkus web application using Playwright with frameworks such as Qute, Quinoa, Renarde, Web-Bundler, and MyFaces. Playwright Test was specifically designed to meet the requirements of end-to-end testing. It supports all modern rendering engines, including Chromium, WebKit, and Firefox. You can run tests on Windows, Linux, and macOS—either locally or in CI—both in headless and headed modes, with native mobile emulation for Google Chrome on Android and Mobile Safari.
 
 
-Just add the `test` dependency to pom.xml:
+Just add the dependency as `<scope>test</scope>` to pom.xml:
 ```xml
 <dependency>
     <groupId>io.quarkiverse.playwright</groupId>
-    <artifactId>quarkus-playwright-test</artifactId>
+    <artifactId>quarkus-playwright</artifactId>
     <version>${playwright.version}</version>
     <scope>test</scope>
 </dependency>

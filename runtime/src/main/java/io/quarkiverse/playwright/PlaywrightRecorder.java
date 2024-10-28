@@ -1,4 +1,4 @@
-package io.quarkiverse.playwright.runtime;
+package io.quarkiverse.playwright;
 
 import java.io.IOException;
 import java.net.URI;

@@ -18,7 +18,7 @@ import com.microsoft.playwright.options.HttpHeader;
 import com.microsoft.playwright.options.Timing;
 import com.microsoft.playwright.options.ViewportSize;
 
-import io.quarkiverse.playwright.runtime.PlaywrightRecorder;
+import io.quarkiverse.playwright.PlaywrightRecorder;
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;

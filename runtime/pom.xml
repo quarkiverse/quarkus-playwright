@@ -23,6 +23,15 @@
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>driver-bundle</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>

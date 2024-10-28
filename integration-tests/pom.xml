@@ -41,15 +41,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.playwright</groupId>
-            <artifactId>quarkus-playwright-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
     <build>
