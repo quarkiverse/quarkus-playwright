@@ -29,6 +29,11 @@ Just add the dependency as `<scope>test</scope>` to pom.xml:
     <version>${playwright.version}</version>
     <scope>test</scope>
 </dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-junit5</artifactId>
+    <scope>test</scope>
+</dependency>
 ```
 Write your tests:
 ````java
