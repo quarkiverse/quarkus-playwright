@@ -1,5 +1,5 @@
 name: Playwright
-description: Playwright is an open-source automation library for browser testing and web scraping.
+description: Playwright is an open-source automation library for end-to-end browser testing and web scraping.
 metadata:
   type: test
   keywords:
@@ -9,10 +9,10 @@ metadata:
     - playwright
     - browser
     - screen-scraper
-  guide: https://quarkiverse.github.io/quarkiverse-docs/playwright/dev/
-  icon-url: "https://playwright.dev/java/img/playwright-logo.svg"
   categories:
-    - "testing"
+    - "web"
   config:
     - "quarkus.playwright."
+  guide: https://quarkiverse.github.io/quarkiverse-docs/playwright/dev/
+  icon-url: "https://playwright.dev/java/img/playwright-logo.svg"
   status: "stable"
