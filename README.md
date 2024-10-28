@@ -9,18 +9,29 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0)
 [![Build](https://github.com/quarkiverse/quarkus-playwright/actions/workflows/build.yml/badge.svg)](https://github.com/quarkiverse/quarkus-playwright/actions/workflows/build.yml)
 
+[Playwright](https://playwright.dev/) is an open-source automation library designed for browser testing and web scraping. This extension supports two primary use cases:
 
-Easily create effective cross-browsers e2e tests for your Quarkus web-app using Playwright (Qute, Quinoa, Renarde, Web-Bundler, ...):
+1. **Testing:** Perform end-to-end tests for your Quarkus web application.
+2. **Runtime:** Leverage Playwright for screen scraping or other browser tasks in your runtime application, including support for GraalVM native compilation.
 
 All the information you need to use Quarkus Playwright is in the [user documentation](https://docs.quarkiverse.io/quarkus-playwright/dev/).
 
-## Usage
-Add to pom.xml:
+## Test Usage
+
+The primary use case for Playwright is integration with `@QuarkusTest` for end-to-end testing of your application. You can easily create effective cross-browser end-to-end tests for your Quarkus web application using Playwright with frameworks such as Qute, Quinoa, Renarde, Web-Bundler, and MyFaces. Playwright Test was specifically designed to meet the requirements of end-to-end testing. It supports all modern rendering engines, including Chromium, WebKit, and Firefox. You can run tests on Windows, Linux, and macOS—either locally or in CI—both in headless and headed modes, with native mobile emulation for Google Chrome on Android and Mobile Safari.
+
+
+Just add the dependency as `<scope>test</scope>` to pom.xml:
 ```xml
 <dependency>
     <groupId>io.quarkiverse.playwright</groupId>
     <artifactId>quarkus-playwright</artifactId>
     <version>${playwright.version}</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-junit5</artifactId>
     <scope>test</scope>
 </dependency>
 ```
@@ -55,9 +66,44 @@ public class WithDefaultPlaywrightTest {
 }
 ````
 
+Use the annotation `@WithPlaywright()` to change the browser (Chromium, Firefox, Webkit), headless, enable debug, logs and other options.
+
 Debug your tests with the Playwright inspector `@WithPlaywright(debug=true)`:
 
 ![Debug](https://github.com/quarkiverse/quarkus-playwright/blob/main/docs/modules/ROOT/assets/images/playwright-debug.gif)
+
+## Runtime Usage
+
+Leverage Playwright for screen scraping or other browser tasks in your runtime application, including support for GraalVM native compilation.
+
+Just add the `runtime` dependency to pom.xml:
+```xml
+<dependency>
+    <groupId>io.quarkiverse.playwright</groupId>
+    <artifactId>quarkus-playwright</artifactId>
+    <version>${playwright.version}</version>
+</dependency>
+```
+
+## Native
+
+If you plan on running in a Docker image we highly recommend you use a pre-built image from Microsoft `mcr.microsoft.com/playwright:v1.48.1` which is based on Ubuntu and already has all libraries and tools necessary for PlayWright.
+
+```yaml
+FROM mcr.microsoft.com/playwright:v1.48.1-noble
+WORKDIR /work/
+RUN chown 1001:root /work \
+    && chmod g+rwX /work \
+    && chown 1001:root /work
+COPY --chown=1001:root target/*.properties target/*.so /work/
+COPY --chown=1001:root target/*-runner /work/application
+# Make application executable for all users
+RUN chmod ugo+x /work/application
+EXPOSE 8080
+USER 1001
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
+```
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
