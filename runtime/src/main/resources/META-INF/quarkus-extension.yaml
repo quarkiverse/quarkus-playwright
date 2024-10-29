@@ -13,6 +13,6 @@ metadata:
     - "web"
   config:
     - "quarkus.playwright."
-  guide: https://quarkiverse.github.io/quarkiverse-docs/playwright/dev/
+  guide: https://docs.quarkiverse.io/quarkus-playwright/dev/
   icon-url: "https://playwright.dev/java/img/playwright-logo.svg"
   status: "stable"
