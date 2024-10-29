@@ -85,7 +85,7 @@ Just add the `runtime` dependency to `pom.xml`:
 
 If you plan on running in a Docker image we highly recommend you use a pre-built image from Microsoft `mcr.microsoft.com/playwright:v1.48.1` which is based on Ubuntu and already has all libraries and tools necessary for PlayWright.
 
-[source]
+[source, dockerfile]
 ----
 FROM mcr.microsoft.com/playwright:v1.48.1-noble
 WORKDIR /work/
