@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.quarkiverse.playwright</groupId>
         <artifactId>quarkus-playwright-parent</artifactId>
-        <version>999-SNAPSHOT</version>
+        <version>2.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -100,7 +100,7 @@
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <configuration>
                     <attributes>
-                        <allow-uri-read/>
+                        <allow-uri-read />
                         <safe-mode>UNSAFE</safe-mode>
                     </attributes>
                 </configuration>
