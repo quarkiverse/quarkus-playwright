@@ -1,6 +1,7 @@
 package io.quarkiverse.playwright;
 
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.Browser.NewContextOptions;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
@@ -111,9 +113,39 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
         if (StringUtils.isNotBlank(this.options.recordVideoDir())) {
             contextOptions.setRecordVideoDir(Paths.get(this.options.recordVideoDir()));
         }
+
+        applyBrowserContextConfig(contextOptions, this.options.browserContext());
+
         this.playwrightContext = playwrightBrowser.newContext(contextOptions);
 
+        applyConfig();
+
         return Collections.emptyMap();
+    }
+
+    private static void applyBrowserContextConfig(NewContextOptions contextOptions, BrowserContextConfig config) {
+        contextOptions.setOffline(config.offline());
+
+        if (StringUtils.isNotBlank(config.locale())) {
+            contextOptions.setLocale(config.locale());
+        }
+
+        if (StringUtils.isNotBlank(config.userAgent())) {
+            contextOptions.setUserAgent(config.userAgent());
+        }
+    }
+
+    private void applyConfig() {
+        var browserContextConfig = this.options.browserContext();
+
+        if (StringUtils.isNotBlank(browserContextConfig.defaultNavigationTimeout())) {
+            this.playwrightContext
+                    .setDefaultNavigationTimeout(Duration.parse(browserContextConfig.defaultNavigationTimeout()).toMillis());
+        }
+
+        if (StringUtils.isNotBlank(browserContextConfig.defaultTimeout())) {
+            this.playwrightContext.setDefaultTimeout(Duration.parse(browserContextConfig.defaultTimeout()).toMillis());
+        }
     }
 
     /**
@@ -157,7 +189,7 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
      */
     @Override
     public void inject(TestInjector testInjector) {
-        // Injects BrowserContext if @InjectPlaywright is present on a matching field
+        // Injects BrowserContextConfig if @InjectPlaywright is present on a matching field
         testInjector.injectIntoFields(playwrightContext,
                 new TestInjector.AnnotatedAndMatchesType(InjectPlaywright.class, BrowserContext.class));
 

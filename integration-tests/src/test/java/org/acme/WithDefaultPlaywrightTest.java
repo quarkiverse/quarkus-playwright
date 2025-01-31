@@ -1,6 +1,10 @@
 package org.acme;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.net.URL;
+
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,6 +32,8 @@ public class WithDefaultPlaywrightTest {
     @Test
     public void testIndex() {
         final Page page = context.newPage();
+        page.onRequest(r -> assertThat(r.headerValue(HttpHeaders.USER_AGENT)).isNotEqualTo("playwright-browser"));
+
         Response response = page.navigate(index.toString());
         Assertions.assertEquals("OK", response.statusText());
 

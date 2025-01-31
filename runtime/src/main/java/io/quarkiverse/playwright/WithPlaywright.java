@@ -126,4 +126,9 @@ public @interface WithPlaywright {
         FIREFOX, // Mozilla Firefox browser.
         WEBKIT // WebKit browser, primarily for Safari compatibility.
     }
+
+    /**
+     * Configuration for creation of the {@link com.microsoft.playwright.BrowserContext BrowserContext}
+     */
+    BrowserContextConfig browserContext() default @BrowserContextConfig;
 }

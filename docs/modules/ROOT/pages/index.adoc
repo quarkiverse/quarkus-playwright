@@ -101,4 +101,20 @@ USER 1001
 CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
 ----
 
+== Additional Configuration
+
+There is additional configuration options available on the `@BrowserContextConfig` and `@WithPlaywright` annotations:
+
+.io.quarkiverse.playwright.BrowserContextConfig
+[source,java,subs="+attributes,macros+"]
+----
+include::{runtime-dir}/src/main/java/io/quarkiverse/playwright/BrowserContextConfig.java[]
+----
+
+.io.quarkiverse.playwright.WithPlaywright
+[source,java,subs="+attributes,macros+"]
+----
+include::{runtime-dir}/src/main/java/io/quarkiverse/playwright/WithPlaywright.java[]
+----
+
 include::includes/quarkus-playwright.adoc[leveloffset=+1, opts=optional]
