@@ -66,6 +66,48 @@ Use the annotation `@WithPlaywright()` to change the browser (Chromium, Firefox,
 
 Debug your tests with the Playwright inspector `@WithPlaywright(debug=true)`.
 
+=== Custom Test Selectors
+
+https://playwright.dev/java/docs/api/class-selectors[Selectors] can be used to install custom selector engines.
+An example of registering selector engine that queries elements based on a tag name:
+
+[source, java]
+----
+@QuarkusTest
+@WithPlaywright(selectors = {
+        @PlaywrightSelector(name = "tag", script = "{\n" +
+                "  // Returns the first element matching given selector in the root's subtree.\n" +
+                "  query(root, selector) {\n" +
+                "    return root.querySelector(selector);\n" +
+                "  },\n" +
+                "  // Returns all elements matching given selector in the root's subtree.\n" +
+                "  queryAll(root, selector) {\n" +
+                "    return Array.from(root.querySelectorAll(selector));\n" +
+                "  }\n" +
+                "}")
+})
+public class WithSelectorsPlaywrightTest {
+
+    @InjectPlaywright
+    BrowserContext context;
+
+    @Test
+    public void testIndex() {
+        final Page page = context.newPage();
+        // add a button to the page
+        page.setContent("<div><button>Click me</button></div>");
+        // Use the selector prefixed with its name.
+        Locator button = page.locator("tag=button");
+        // Combine it with built-in locators.
+        page.locator("tag=div").getByText("Click me").click();
+        // Can use it in any methods supporting selectors.
+        int buttonCount = (int) page.locator("tag=button").count();
+        Assertions.assertEquals(1, buttonCount);
+    }
+
+}
+----
+
 == Runtime Usage
 
 Leverage Playwright for screen scraping or other browser tasks in your runtime application, including support for GraalVM native compilation.

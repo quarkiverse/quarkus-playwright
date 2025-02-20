@@ -75,6 +75,14 @@ public @interface WithPlaywright {
     String channel() default "";
 
     /**
+     * Defines custom attribute name to be used in Page.getByTestId(). "data-testid" is used by default.
+     * <p>
+     * Defaults to "data-testid".
+     * </p>
+     */
+    String testId() default "data-testid";
+
+    /**
      * Enables sandboxing for Chromium-based browsers.
      * <p>
      * Defaults to {@code false} for compatibility. Set to {@code true} to enable sandboxing if supported.
@@ -117,6 +125,17 @@ public @interface WithPlaywright {
      * </p>
      */
     String[] args() default { "--disable-gpu" };
+
+    /**
+     * Specifies Playwright selectors to be used for locating elements in tests.
+     * <p>
+     * Multiple selectors can be defined and optionally named for reference.
+     * These selectors will be available for use in test methods annotated with this annotation.
+     * </p>
+     *
+     * @return Array of {@link PlaywrightSelector} annotations defining the selectors
+     */
+    PlaywrightSelector[] selectors() default {};
 
     /**
      * Enum representing the supported browsers for Playwright testing.

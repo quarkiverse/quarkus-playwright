@@ -21,15 +21,20 @@ import io.quarkus.test.common.QuarkusTestResourceConfigurableLifecycleManager;
 /**
  * Manages the lifecycle of a Playwright instance in Quarkus tests.
  * <p>
- * This class implements {@link QuarkusTestResourceConfigurableLifecycleManager} and is responsible
- * for initializing and configuring Playwright resources, such as the {@link Browser},
- * {@link BrowserContext}, and {@link Playwright} instance, according to the settings specified
+ * This class implements {@link QuarkusTestResourceConfigurableLifecycleManager}
+ * and is responsible
+ * for initializing and configuring Playwright resources, such as the
+ * {@link Browser},
+ * {@link BrowserContext}, and {@link Playwright} instance, according to the
+ * settings specified
  * in the {@link WithPlaywright} annotation.
  * </p>
  *
  * <p>
- * This manager supports injecting Playwright resources into test classes marked with the
- * {@code @InjectPlaywright} annotation, allowing easy access to {@link BrowserContext},
+ * This manager supports injecting Playwright resources into test classes marked
+ * with the
+ * {@code @InjectPlaywright} annotation, allowing easy access to
+ * {@link BrowserContext},
  * {@link Browser}, or {@link Playwright} instances.
  * </p>
  *
@@ -40,20 +45,30 @@ import io.quarkus.test.common.QuarkusTestResourceConfigurableLifecycleManager;
  */
 public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurableLifecycleManager<WithPlaywright> {
 
-    /** Holds the configuration options from the {@link WithPlaywright} annotation. */
+    /**
+     * Holds the configuration options from the {@link WithPlaywright} annotation.
+     */
     private WithPlaywright options;
 
-    /** The global Playwright instance for managing browser creation and operations. */
+    /**
+     * The global Playwright instance for managing browser creation and operations.
+     */
     private Playwright playwright;
 
-    /** The context in which the browser operates, encapsulating tabs, storage, etc. */
+    /**
+     * The context in which the browser operates, encapsulating tabs, storage, etc.
+     */
     private BrowserContext playwrightContext;
 
-    /** The specific browser instance (Chromium, Firefox, WebKit) launched by Playwright. */
+    /**
+     * The specific browser instance (Chromium, Firefox, WebKit) launched by
+     * Playwright.
+     */
     private Browser playwrightBrowser;
 
     /**
-     * Initializes the Playwright manager with configuration from {@link WithPlaywright}.
+     * Initializes the Playwright manager with configuration from
+     * {@link WithPlaywright}.
      *
      * @param withPlaywright the Playwright configuration options
      */
@@ -63,7 +78,8 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
     }
 
     /**
-     * Not used in this implementation. Throws an exception to ensure only {@code @WithPlaywright}
+     * Not used in this implementation. Throws an exception to ensure only
+     * {@code @WithPlaywright}
      * annotation is used for initialization.
      *
      * @param initArgs ignored initialization arguments
@@ -75,7 +91,8 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
     }
 
     /**
-     * Starts the Playwright environment and configures the browser and context based on
+     * Starts the Playwright environment and configures the browser and context
+     * based on
      * {@link WithPlaywright} options.
      *
      * @return an empty map as no additional environment variables are required
@@ -95,6 +112,14 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
 
         // Create Playwright instance with the specified environment variables
         this.playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env));
+
+        // register testId attribute default to "data-testid"
+        this.playwright.selectors().setTestIdAttribute(this.options.testId());
+
+        // register any selectors
+        for (PlaywrightSelector selector : this.options.selectors()) {
+            this.playwright.selectors().register(selector.name(), selector.script());
+        }
 
         // Configure launch options based on @WithPlaywright attributes
         final LaunchOptions launchOptions = new LaunchOptions()
@@ -140,7 +165,8 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
 
         if (StringUtils.isNotBlank(browserContextConfig.defaultNavigationTimeout())) {
             this.playwrightContext
-                    .setDefaultNavigationTimeout(Duration.parse(browserContextConfig.defaultNavigationTimeout()).toMillis());
+                    .setDefaultNavigationTimeout(
+                            Duration.parse(browserContextConfig.defaultNavigationTimeout()).toMillis());
         }
 
         if (StringUtils.isNotBlank(browserContextConfig.defaultTimeout())) {
@@ -149,10 +175,12 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
     }
 
     /**
-     * Helper method to retrieve the correct {@link BrowserType} based on the specified browser.
+     * Helper method to retrieve the correct {@link BrowserType} based on the
+     * specified browser.
      *
      * @param playwright the Playwright instance
-     * @param browser the browser type from the {@link WithPlaywright.Browser} enum
+     * @param browser the browser type from the {@link WithPlaywright.Browser}
+     *        enum
      * @return the corresponding {@link BrowserType} instance
      */
     private static BrowserType browser(Playwright playwright, WithPlaywright.Browser browser) {
@@ -179,9 +207,11 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
     }
 
     /**
-     * Injects Playwright resources into fields annotated with {@code @InjectPlaywright} in test classes.
+     * Injects Playwright resources into fields annotated with
+     * {@code @InjectPlaywright} in test classes.
      * <p>
-     * This method supports injection of {@link BrowserContext}, {@link Browser}, and {@link Playwright}
+     * This method supports injection of {@link BrowserContext}, {@link Browser},
+     * and {@link Playwright}
      * into appropriately annotated fields.
      * </p>
      *
@@ -189,7 +219,8 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
      */
     @Override
     public void inject(TestInjector testInjector) {
-        // Injects BrowserContextConfig if @InjectPlaywright is present on a matching field
+        // Injects BrowserContextConfig if @InjectPlaywright is present on a matching
+        // field
         testInjector.injectIntoFields(playwrightContext,
                 new TestInjector.AnnotatedAndMatchesType(InjectPlaywright.class, BrowserContext.class));
 
