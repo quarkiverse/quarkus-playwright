@@ -117,6 +117,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "Grantismo",
+      "name": "Grant Warman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/911232?v=4",
+      "profile": "https://github.com/Grantismo",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
