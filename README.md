@@ -85,6 +85,52 @@ Just add the `runtime` dependency to pom.xml:
 </dependency>
 ```
 
+In runtime mode, Playwright is used directly through its Java SDK without CDI injection. Follow the standard Microsoft Playwright documentation for usage patterns. Below is an example REST service that demonstrates screen scraping:
+
+```java
+@Path("/playwright")
+@ApplicationScoped
+public class PlaywrightResource {
+
+    private static final Logger log = Logger.getLogger(PlaywrightResource.class);
+
+    /**
+     * Navigates to Google homepage and retrieves the page title using Playwright.
+     * 
+     * <p>This endpoint demonstrates basic Playwright functionality by:
+     * <ul>
+     *   <li>Launching a headless Chromium browser</li>
+     *   <li>Creating a new page and navigating to google.com</li>
+     *   <li>Retrieving and returning the page title</li>
+     * </ul>
+     * </p>
+     *
+     * @return The title of the Google homepage
+     */
+    @GET
+    public String google() {
+        String pageTitle;
+        final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
+                .setHeadless(true)
+                .setChromiumSandbox(false)
+                .setChannel("")
+                .setArgs(List.of("--disable-gpu"));
+        final Map<String, String> env = new HashMap<>(System.getenv());
+        env.put("DEBUG", "pw:api");
+        try (Playwright playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env))) {
+            try (Browser browser = playwright.chromium().launch(launchOptions)) {
+                Page page = browser.newPage();
+                page.navigate("https://www.google.com/");
+                pageTitle = page.title();
+                log.infof("Page title: %s", pageTitle);
+            }
+        }
+        return pageTitle;
+    }
+}
+```
+
+
 ## Native
 
 If you plan on running in a Docker image we highly recommend you use a pre-built image from Microsoft `mcr.microsoft.com/playwright:v1.48.1` which is based on Ubuntu and already has all libraries and tools necessary for PlayWright.

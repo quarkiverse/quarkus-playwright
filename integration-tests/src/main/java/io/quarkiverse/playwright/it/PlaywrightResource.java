@@ -20,10 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-
 import org.jboss.logging.Logger;
 
 import com.microsoft.playwright.Browser;
@@ -31,12 +27,33 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+
+/**
+ * Resource class demonstrating Playwright browser automation capabilities.
+ * This class provides endpoints for interacting with web pages using Playwright.
+ */
 @Path("/playwright")
 @ApplicationScoped
 public class PlaywrightResource {
 
     private static final Logger log = Logger.getLogger(PlaywrightResource.class);
 
+    /**
+     * Navigates to Google homepage and retrieves the page title using Playwright.
+     * 
+     * <p>This endpoint demonstrates basic Playwright functionality by:
+     * <ul>
+     *   <li>Launching a headless Chromium browser</li>
+     *   <li>Creating a new page and navigating to google.com</li>
+     *   <li>Retrieving and returning the page title</li>
+     * </ul>
+     * </p>
+     *
+     * @return The title of the Google homepage
+     */
     @GET
     public String google() {
         String pageTitle;
