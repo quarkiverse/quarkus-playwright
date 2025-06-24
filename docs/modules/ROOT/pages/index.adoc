@@ -169,6 +169,18 @@ public class PlaywrightResource {
 }
 ----
 
+== Setting Up CI
+
+When running Playwright tests in CI, you need to ensure that the required browser dependencies are installed. In the case of GitHub Actions, add the following step to your workflow:
+
+[source,yaml]
+----
+- name: Ensure browsers are installed
+  run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps chromium"
+----
+
+For more information about browser installation and configuration, see the https://playwright.dev/java/docs/browsers[Playwright Browsers documentation].
+
 == Native
 
 If you plan on running in a Docker image we highly recommend you use a pre-built image from Microsoft `mcr.microsoft.com/playwright:v1.48.1` which is based on Ubuntu and already has all libraries and tools necessary for PlayWright.
