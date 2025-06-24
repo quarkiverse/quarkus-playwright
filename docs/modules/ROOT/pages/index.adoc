@@ -171,7 +171,7 @@ public class PlaywrightResource {
 
 == GitHub Actions
 
-When running Playwright tests in GitHub Actions, you need to ensure that the required browser dependencies are installed. Add the following step to your workflow:
+When running Playwright tests in CI, you need to ensure that the required browser dependencies are installed. In the case of GitHub Actions, add the following step to your workflow:
 
 [source,yaml]
 ----
