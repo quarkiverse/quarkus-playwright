@@ -133,10 +133,10 @@ public class PlaywrightResource {
 
 ## Native
 
-If you plan on running in a Docker image we highly recommend you use a pre-built image from Microsoft `mcr.microsoft.com/playwright:v1.48.1` which is based on Ubuntu and already has all libraries and tools necessary for PlayWright.
+If you plan on running in a Docker image we highly recommend you use a pre-built image from Microsoft `mcr.microsoft.com/playwright:v1.53.1-noble` which is based on Ubuntu and already has all libraries and tools necessary for PlayWright.
 
 ```yaml
-FROM mcr.microsoft.com/playwright:v1.48.1-noble
+FROM mcr.microsoft.com/playwright:v1.53.1-noble
 WORKDIR /work/
 RUN chown 1001:root /work \
     && chmod g+rwX /work \
