@@ -126,6 +126,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "lucas-dclrcq",
+      "name": "Lucas Declercq",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11808564?v=4",
+      "profile": "https://github.com/lucas-dclrcq",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
