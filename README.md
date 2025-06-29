@@ -175,6 +175,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://martinpanzer.de"><img src="https://avatars.githubusercontent.com/u/1223135?v=4?s=100" width="100px;" alt="Martin Panzer"/><br /><sub><b>Martin Panzer</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/issues?q=author%3APostremus" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://blog.zanclus.com/"><img src="https://avatars.githubusercontent.com/u/99691?v=4?s=100" width="100px;" alt="Deven Phillips"/><br /><sub><b>Deven Phillips</b></sub></a><br /><a href="#ideas-InfoSec812" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Grantismo"><img src="https://avatars.githubusercontent.com/u/911232?v=4?s=100" width="100px;" alt="Grant Warman"/><br /><sub><b>Grant Warman</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=Grantismo" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lucas-dclrcq"><img src="https://avatars.githubusercontent.com/u/11808564?v=4?s=100" width="100px;" alt="Lucas Declercq"/><br /><sub><b>Lucas Declercq</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/issues?q=author%3Alucas-dclrcq" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
