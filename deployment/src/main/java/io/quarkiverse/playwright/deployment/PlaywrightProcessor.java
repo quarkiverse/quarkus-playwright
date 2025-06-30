@@ -12,6 +12,7 @@ import org.jboss.jandex.DotName;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.ElementHandle;
+import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.impl.driver.jar.DriverJar;
 import com.microsoft.playwright.options.HttpHeader;
@@ -77,6 +78,7 @@ class PlaywrightProcessor {
         classNames.add(ElementHandle.ScreenshotOptions.class.getName());
         classNames.add(ElementHandle.ScrollIntoViewIfNeededOptions.class.getName());
         classNames.add(ElementHandle.SelectTextOptions.class.getName());
+        classNames.add(ElementHandle.SetCheckedOptions.class.getName());
         classNames.add(ElementHandle.SetInputFilesOptions.class.getName());
         classNames.add(ElementHandle.TapOptions.class.getName());
         classNames.add(ElementHandle.TypeOptions.class.getName());
@@ -86,6 +88,36 @@ class PlaywrightProcessor {
         classNames.add(HttpHeader.class.getName());
         classNames.add(Timing.class.getName());
         classNames.add(ViewportSize.class.getName());
+        classNames.add(Frame.AddScriptTagOptions.class.getName());
+        classNames.add(Frame.AddStyleTagOptions.class.getName());
+        classNames.add(Frame.CheckOptions.class.getName());
+        classNames.add(Frame.ClickOptions.class.getName());
+        classNames.add(Frame.DblclickOptions.class.getName());
+        classNames.add(Frame.DispatchEventOptions.class.getName());
+        classNames.add(Frame.FillOptions.class.getName());
+        classNames.add(Frame.FocusOptions.class.getName());
+        classNames.add(Frame.GetAttributeOptions.class.getName());
+        classNames.add(Frame.GetByRoleOptions.class.getName());
+        classNames.add(Frame.GetByTextOptions.class.getName());
+        classNames.add(Frame.HoverOptions.class.getName());
+        classNames.add(Frame.InnerHTMLOptions.class.getName());
+        classNames.add(Frame.InnerTextOptions.class.getName());
+        classNames.add(Frame.InputValueOptions.class.getName());
+        classNames.add(Frame.IsVisibleOptions.class.getName());
+        classNames.add(Frame.LocatorOptions.class.getName());
+        classNames.add(Frame.PressOptions.class.getName());
+        classNames.add(Frame.SelectOptionOptions.class.getName());
+        classNames.add(Frame.SetContentOptions.class.getName());
+        classNames.add(Frame.SetInputFilesOptions.class.getName());
+        classNames.add(Frame.TapOptions.class.getName());
+        classNames.add(Frame.TextContentOptions.class.getName());
+        classNames.add(Frame.TypeOptions.class.getName());
+        classNames.add(Frame.UncheckOptions.class.getName());
+        classNames.add(Frame.UncheckOptions.class.getName());
+        classNames.add(Frame.WaitForFunctionOptions.class.getName());
+        classNames.add(Frame.WaitForLoadStateOptions.class.getName());
+        classNames.add(Frame.WaitForSelectorOptions.class.getName());
+        classNames.add(Frame.WaitForURLOptions.class.getName());
         classNames.addAll(collectImplementors(combinedIndex, Playwright.class.getName()));
 
         //@formatter:on
