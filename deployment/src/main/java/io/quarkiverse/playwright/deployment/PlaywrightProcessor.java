@@ -155,7 +155,7 @@ class PlaywrightProcessor {
 
     private List<String> collectImplementors(CombinedIndexBuildItem combinedIndex, String className) {
         Set<String> classes = combinedIndex.getIndex()
-                .getAllKnownImplementors(DotName.createSimple(className))
+                .getAllKnownImplementations(DotName.createSimple(className))
                 .stream()
                 .map(ClassInfo::toString)
                 .collect(Collectors.toCollection(HashSet::new));
