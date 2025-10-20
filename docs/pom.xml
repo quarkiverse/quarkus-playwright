@@ -15,7 +15,7 @@
         <!-- Make sure the doc is built after the other artifacts -->
         <dependency>
             <groupId>io.quarkiverse.playwright</groupId>
-            <artifactId>quarkus-playwright</artifactId>
+            <artifactId>quarkus-playwright-deployment</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
