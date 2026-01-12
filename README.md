@@ -181,6 +181,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Grantismo"><img src="https://avatars.githubusercontent.com/u/911232?v=4?s=100" width="100px;" alt="Grant Warman"/><br /><sub><b>Grant Warman</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=Grantismo" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lucas-dclrcq"><img src="https://avatars.githubusercontent.com/u/11808564?v=4?s=100" width="100px;" alt="Lucas Declercq"/><br /><sub><b>Lucas Declercq</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/issues?q=author%3Alucas-dclrcq" title="Bug reports">🐛</a> <a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=lucas-dclrcq" title="Tests">⚠️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://wjglerum.nl"><img src="https://avatars.githubusercontent.com/u/7404187?v=4?s=100" width="100px;" alt="Willem Jan Glerum"/><br /><sub><b>Willem Jan Glerum</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=wjglerum" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
