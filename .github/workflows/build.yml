@@ -54,8 +54,8 @@ jobs:
 
       - name: Ensure browsers are installed
         run: |
-          mvn -pl runtime exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install"
-          mvn -pl runtime exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
+          mvn -pl runtime exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps chromium"
+          mvn -pl runtime exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install chromium"
 
       - name: Build with Maven
         run: mvn -B clean install -Dno-format --no-transfer-progress
