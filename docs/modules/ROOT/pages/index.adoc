@@ -176,7 +176,7 @@ When running Playwright tests in CI, you need to ensure that the required browse
 [source,yaml]
 ----
 - name: Ensure browsers are installed
-  run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps chromium"
+  run: mvn exec:java -e -D exec.classpathScope=test -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps chromium"
 ----
 
 For more information about browser installation and configuration, see the https://playwright.dev/java/docs/browsers[Playwright Browsers documentation].
