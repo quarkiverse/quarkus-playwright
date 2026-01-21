@@ -50,9 +50,34 @@ public @interface BrowserContextConfig {
     String locale() default "";
 
     /**
+     * Changes the timezone of the context. See <a href=
+     * "https://cs.chromium.org/chromium/src/third_party/icu/source/data/misc/metaZones.txt?rcl=faee8bc70570192d82d2978a71e2a615788597d1">ICU's
+     * metaZones.txt</a> for a list of supported timezone IDs. Defaults to the system timezone.
+     *
+     * @see com.microsoft.playwright.Browser.NewContextOptions#setTimezoneId(String)
+     */
+    String timeZoneId() default "";
+
+    /**
+     * Emulates consistent viewport for each page. Defaults to an 1280x720 viewport.
+     *
+     * @see com.microsoft.playwright.Browser.NewContextOptions#setViewportSize(int, int)
+     */
+    ViewportSize viewportSize() default @ViewportSize(width = 1080, height = 720);
+
+    /**
      * Whether to emulate the network being offline for the browser context
      *
      * @see com.microsoft.playwright.Browser.NewContextOptions#setOffline(boolean)
      */
     boolean offline() default false;
+
+    @Target({})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Inherited
+    @interface ViewportSize {
+        int width();
+
+        int height();
+    }
 }

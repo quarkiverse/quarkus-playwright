@@ -155,6 +155,12 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
             contextOptions.setLocale(config.locale());
         }
 
+        if (StringUtils.isNotBlank(config.timeZoneId())) {
+            contextOptions.setTimezoneId(config.timeZoneId());
+        }
+
+        contextOptions.setViewportSize(config.viewportSize().width(), config.viewportSize().height());
+
         if (StringUtils.isNotBlank(config.userAgent())) {
             contextOptions.setUserAgent(config.userAgent());
         }
