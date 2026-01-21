@@ -1,6 +1,7 @@
 package org.acme;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,7 @@ import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-@WithPlaywright(browserContext = @BrowserContextConfig(userAgent = "playwright-browser", defaultNavigationTimeout = "PT10s"))
+@WithPlaywright(browserContext = @BrowserContextConfig(userAgent = "playwright-browser", timeZoneId = "Europe/Amsterdam", defaultNavigationTimeout = "PT10s", viewportSize = @BrowserContextConfig.ViewportSize(width = 1920, height = 1080)))
 class PlaywrightConfigTest {
     @InjectPlaywright
     BrowserContext context;
