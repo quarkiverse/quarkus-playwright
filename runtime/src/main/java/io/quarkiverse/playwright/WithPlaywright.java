@@ -150,4 +150,9 @@ public @interface WithPlaywright {
      * Configuration for creation of the {@link com.microsoft.playwright.BrowserContext BrowserContext}
      */
     BrowserContextConfig browserContext() default @BrowserContextConfig;
+
+    /**
+     * Specifies a custom {@link PlaywrightAdapter} implementation to adapt the Playwright BrowserContext for testing.
+     */
+    Class<? extends PlaywrightAdapter> playwrightAdapter() default QuarkusPlaywrightManager.NoOpAdapter.class;
 }
