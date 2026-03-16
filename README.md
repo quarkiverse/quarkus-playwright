@@ -183,6 +183,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://wjglerum.nl"><img src="https://avatars.githubusercontent.com/u/7404187?v=4?s=100" width="100px;" alt="Willem Jan Glerum"/><br /><sub><b>Willem Jan Glerum</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=wjglerum" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jfbenckhuijsen"><img src="https://avatars.githubusercontent.com/u/6218066?v=4?s=100" width="100px;" alt="Jeroen Benckhuijsen"/><br /><sub><b>Jeroen Benckhuijsen</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-playwright/commits?author=jfbenckhuijsen" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
