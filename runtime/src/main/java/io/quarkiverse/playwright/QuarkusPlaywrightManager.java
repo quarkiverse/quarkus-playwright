@@ -1,5 +1,6 @@
 package io.quarkiverse.playwright;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
@@ -44,6 +45,10 @@ import io.quarkus.test.common.QuarkusTestResourceConfigurableLifecycleManager;
  * @since 1.0
  */
 public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurableLifecycleManager<WithPlaywright> {
+
+    public static class NoOpAdapter implements PlaywrightAdapter {
+        // No-op implementation, can be used as a default adapter
+    }
 
     /**
      * Holds the configuration options from the {@link WithPlaywright} annotation.
@@ -110,8 +115,17 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
             env.put("PWDEBUG", "1");
         }
 
+        PlaywrightAdapter adapter;
+        try {
+            adapter = this.options.playwrightAdapter().getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new IllegalStateException("Adapter class cannot be created", e);
+        }
+
         // Create Playwright instance with the specified environment variables
-        this.playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env));
+        this.playwright = Playwright.create(
+                adapter.adaptCreateOptions(
+                        new Playwright.CreateOptions().setEnv(env)));
 
         // register testId attribute default to "data-testid"
         this.playwright.selectors().setTestIdAttribute(this.options.testId());
@@ -122,13 +136,14 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
         }
 
         // Configure launch options based on @WithPlaywright attributes
-        final LaunchOptions launchOptions = new LaunchOptions()
-                .setChannel(this.options.channel())
-                .setChromiumSandbox(this.options.chromiumSandbox())
-                .setHeadless(this.options.headless())
-                .setSlowMo(this.options.slowMo())
-                .setEnv(env)
-                .setArgs(Arrays.asList(this.options.args()));
+        final LaunchOptions launchOptions = adapter.adaptLaunchOptions(
+                new LaunchOptions()
+                        .setChannel(this.options.channel())
+                        .setChromiumSandbox(this.options.chromiumSandbox())
+                        .setHeadless(this.options.headless())
+                        .setSlowMo(this.options.slowMo())
+                        .setEnv(env)
+                        .setArgs(Arrays.asList(this.options.args())));
 
         // Launch the browser based on the specified type (CHROMIUM, FIREFOX, or WEBKIT)
         this.playwrightBrowser = browser(playwright, this.options.browser()).launch(launchOptions);
@@ -141,7 +156,7 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
 
         applyBrowserContextConfig(contextOptions, this.options.browserContext());
 
-        this.playwrightContext = playwrightBrowser.newContext(contextOptions);
+        this.playwrightContext = playwrightBrowser.newContext(adapter.adaptNewContextOptions(contextOptions));
 
         applyConfig();
 

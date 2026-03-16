@@ -108,6 +108,43 @@ public class WithSelectorsPlaywrightTest {
 }
 ----
 
+=== Custom Playwright configuration
+
+Use `@WithPlaywright(playwrightAdapter = ...)` when you need to adapt low-level Playwright options globally for a test class, where the default options provided by the `@WithPlaywright` annotation are not sufficient. This allows you to customize the Playwright configuration at various stages of the browser and context creation process.
+
+A `PlaywrightAdapter` can customize:
+
+- `Playwright.CreateOptions` via `adaptCreateOptions`
+- `BrowserType.LaunchOptions` via `adaptLaunchOptions`
+- `Browser.NewContextOptions` via `adaptNewContextOptions`
+
+The adapter class must implement `io.quarkiverse.playwright.PlaywrightAdapter` and have a no-argument constructor. Each of the methods has a default no-op implementation, so you can choose to override only the methods relevant to your use case. For example, the following adapter sets a custom viewport size for all contexts created in the test class:
+
+[source, java]
+----
+@QuarkusTest
+@WithPlaywright(playwrightAdapter = WithAdapterPlaywrightTest.CustomAdapter.class)
+public class WithAdapterPlaywrightTest {
+
+    public static class CustomAdapter implements PlaywrightAdapter {
+        @Override
+        public Browser.NewContextOptions adaptNewContextOptions(Browser.NewContextOptions newContextOptions) {
+            return newContextOptions.setViewportSize(100, 200);
+        }
+    }
+
+    @InjectPlaywright
+    BrowserContext context;
+
+    @Test
+    public void testViewport() {
+        final Page page = context.newPage();
+        Assertions.assertEquals(100, page.viewportSize().width);
+        Assertions.assertEquals(200, page.viewportSize().height);
+    }
+}
+----
+
 == Runtime Usage
 
 Leverage Playwright for screen scraping or other browser tasks in your runtime application, including support for GraalVM native compilation.
@@ -416,6 +453,11 @@ public @interface WithPlaywright {
      * Configuration for creation of the {@link com.microsoft.playwright.BrowserContext BrowserContext}
      */
     BrowserContextConfig browserContext() default @BrowserContextConfig;
+
+    /**
+     * Specifies a custom {@link PlaywrightAdapter} implementation to adapt Playwright options.
+     */
+    Class<? extends PlaywrightAdapter> playwrightAdapter() default QuarkusPlaywrightManager.NoOpAdapter.class;
 }
 ----
 
