@@ -63,7 +63,7 @@ public @interface BrowserContextConfig {
      *
      * @see com.microsoft.playwright.Browser.NewContextOptions#setViewportSize(int, int)
      */
-    ViewportSize viewportSize() default @ViewportSize(width = 1080, height = 720);
+    ViewportSize viewportSize() default @ViewportSize(width = 1280, height = 720);
 
     /**
      * Whether to emulate the network being offline for the browser context
