@@ -30,6 +30,7 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.AriaSnapshotMode;
 
 /**
  * Resource class demonstrating Playwright browser automation capabilities.
@@ -74,5 +75,33 @@ public class PlaywrightResource {
             }
         }
         return pageTitle;
+    }
+
+    /**
+     * Endpoint to load an Aria Snapshot in AI mode
+     */
+    @GET
+    @Path("/aria")
+    public String ariaAiModeSnapshot() {
+        String ariaSnapshot;
+        final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
+                .setHeadless(true)
+                .setChromiumSandbox(false)
+                .setChannel("")
+                .setArgs(List.of("--disable-gpu"));
+        final Map<String, String> env = new HashMap<>(System.getenv());
+        env.put("DEBUG", "pw:api");
+        try (Playwright playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env))) {
+            try (Browser browser = playwright.chromium().launch(launchOptions)) {
+                Page page = browser.newPage();
+                page.navigate("https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe");
+                page.waitForSelector("interactive-example iframe");
+                Page.AriaSnapshotOptions ariaSnapshotOptions = new Page.AriaSnapshotOptions();
+                ariaSnapshotOptions.setMode(AriaSnapshotMode.AI);
+                ariaSnapshot = page.ariaSnapshot(ariaSnapshotOptions);
+                log.infof("Page title: %s", ariaSnapshot);
+            }
+        }
+        return ariaSnapshot;
     }
 }
