@@ -116,8 +116,7 @@ public class PlaywrightResource {
         final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                 .setHeadless(true)
                 .setChromiumSandbox(false)
-                .setChannel("")
-                .setArgs(List.of("--disable-gpu"));
+                .setChannel("");
 
         try (Playwright playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env))) {
             List<BrowserType> browserTypes = List.of(
