@@ -17,6 +17,7 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
 import com.microsoft.playwright.Playwright;
 
+import io.quarkus.test.common.DevServicesContext;
 import io.quarkus.test.common.QuarkusTestResourceConfigurableLifecycleManager;
 
 /**
@@ -44,7 +45,8 @@ import io.quarkus.test.common.QuarkusTestResourceConfigurableLifecycleManager;
  * @see QuarkusTestResourceConfigurableLifecycleManager
  * @since 1.0
  */
-public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurableLifecycleManager<WithPlaywright> {
+public class QuarkusPlaywrightManager
+        implements QuarkusTestResourceConfigurableLifecycleManager<WithPlaywright>, DevServicesContext.ContextAware {
 
     public static class NoOpAdapter implements PlaywrightAdapter {
         // No-op implementation, can be used as a default adapter
@@ -54,6 +56,12 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
      * Holds the configuration options from the {@link WithPlaywright} annotation.
      */
     private WithPlaywright options;
+
+    /**
+     * Provides access to properties produced by Dev Services, such as the
+     * Playwright server endpoint started by the Playwright Dev Service.
+     */
+    private DevServicesContext devServicesContext;
 
     /**
      * The global Playwright instance for managing browser creation and operations.
@@ -123,7 +131,7 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
         }
 
         // Create Playwright instance with the specified environment variables
-        this.playwright = Playwright.create(
+        this.playwright = createPlaywright(
                 adapter.adaptCreateOptions(
                         new Playwright.CreateOptions().setEnv(env)));
 
@@ -135,18 +143,7 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
             this.playwright.selectors().register(selector.name(), selector.script());
         }
 
-        // Configure launch options based on @WithPlaywright attributes
-        final LaunchOptions launchOptions = adapter.adaptLaunchOptions(
-                new LaunchOptions()
-                        .setChannel(this.options.channel())
-                        .setChromiumSandbox(this.options.chromiumSandbox())
-                        .setHeadless(this.options.headless())
-                        .setSlowMo(this.options.slowMo())
-                        .setEnv(env)
-                        .setArgs(Arrays.asList(this.options.args())));
-
-        // Launch the browser based on the specified type (CHROMIUM, FIREFOX, or WEBKIT)
-        this.playwrightBrowser = browser(playwright, this.options.browser()).launch(launchOptions);
+        this.playwrightBrowser = startBrowser(adapter, env);
 
         // Configure the context, setting the video directory if specified
         final Browser.NewContextOptions contextOptions = new Browser.NewContextOptions();
@@ -161,6 +158,45 @@ public class QuarkusPlaywrightManager implements QuarkusTestResourceConfigurable
         applyConfig();
 
         return Collections.emptyMap();
+    }
+
+    @Override
+    public void setIntegrationTestContext(DevServicesContext context) {
+        this.devServicesContext = context;
+    }
+
+    protected String resolveEndpoint() {
+        if (this.devServicesContext != null) {
+            return this.devServicesContext.devServicesProperties().getOrDefault("quarkus.playwright.endpoint", "");
+        }
+
+        return "";
+    }
+
+    protected Playwright createPlaywright(Playwright.CreateOptions createOptions) {
+        return Playwright.create(createOptions);
+    }
+
+    private Browser startBrowser(PlaywrightAdapter adapter, Map<String, String> env) {
+        final BrowserType browserType = browser(playwright, this.options.browser());
+        final String endpoint = resolveEndpoint();
+
+        if (StringUtils.isNotBlank(endpoint)) {
+            final BrowserType.ConnectOptions connectOptions = adapter.adaptConnectOptions(
+                    new BrowserType.ConnectOptions().setSlowMo(this.options.slowMo()));
+            return browserType.connect(endpoint, connectOptions);
+        }
+
+        // No endpoint configured, so launch a local browser process.
+        final LaunchOptions launchOptions = adapter.adaptLaunchOptions(
+                new LaunchOptions()
+                        .setChannel(this.options.channel())
+                        .setChromiumSandbox(this.options.chromiumSandbox())
+                        .setHeadless(this.options.headless())
+                        .setSlowMo(this.options.slowMo())
+                        .setEnv(env)
+                        .setArgs(Arrays.asList(this.options.args())));
+        return browserType.launch(launchOptions);
     }
 
     private static void applyBrowserContextConfig(NewContextOptions contextOptions, BrowserContextConfig config) {

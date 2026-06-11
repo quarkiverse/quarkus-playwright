@@ -145,6 +145,80 @@ public class WithAdapterPlaywrightTest {
 }
 ----
 
+=== Dev Services
+
+Instead of launching a local browser process for each test, you can connect to a remote Playwright browser server:
+
+[source,properties]
+----
+quarkus.playwright.endpoint=ws://localhost:3000/
+----
+
+To have Quarkus start a Playwright server container automatically in dev and test mode, enable Dev Services:
+
+[source,properties]
+----
+quarkus.playwright.devservices.enabled=true
+# optional, defaults to mcr.microsoft.com/playwright:v1.60.0-noble
+quarkus.playwright.devservices.image-name=mcr.microsoft.com/playwright:v1.60.0-noble
+# optional, defaults to false, enable verbose logging. Logging will be redirected to the
+# Quarkus logging as the container is stopped after execution
+quarkus.playwright.devservices.verbose=true
+----
+
+When Dev Services is enabled, `quarkus.playwright.endpoint` is derived automatically from the started container.
+
+=== Connecting to the Host Machine (Dev Services)
+
+By default, the Playwright server started by Dev Services runs in its own Docker container, isolated from the host
+machine. This is fine when your application under test is also running in a container on the same Docker network.
+However, it is common during development and in CI to run the Quarkus application directly on the host (e.g. via
+`@QuarkusTest`'s in-process HTTP server) while Playwright runs in a container, navigating to that host application
+over the network.
+
+Docker provides `host.docker.internal` for this purpose, but it is only available on Docker Desktop (macOS/Windows)
+and not on Linux, where most CI runners execute. To provide a portable solution, Testcontainers offers
+`host.testcontainers.internal`, a DNS alias that resolves to the host machine from within a container, regardless of
+the operating system.
+
+To enable this for the Playwright Dev Service, set:
+
+[source,properties]
+----
+quarkus.playwright.devservices.shared-network=true
+----
+
+When enabled:
+
+* The Playwright container is attached to a shared Testcontainers Docker network.
+* The host's `quarkus.http.test-port` (defaults to `8081`) is exposed to that network via
+  `host.testcontainers.internal`.
+* From within your test, you can navigate Playwright to the application under test using
+  `http://host.testcontainers.internal:<quarkus.http.test-port>/`.
+
+[source, java]
+----
+@QuarkusTest
+@WithPlaywright
+public class HostConnectionTest {
+
+    @InjectPlaywright
+    BrowserContext context;
+
+    @Test
+    public void testIndex() {
+        final Page page = context.newPage();
+        Response response = page.navigate("http://host.testcontainers.internal:8081/");
+        Assertions.assertEquals("OK", response.statusText());
+    }
+}
+----
+
+NOTE: `quarkus.playwright.devservices.shared-network` defaults to `false`. Enabling shared networking starts an
+additional ambassador container and Docker network for every Dev Services run, and places the Playwright container
+on a named network rather than the default bridge network. Only enable it when your test actually needs to reach
+the host machine.
+
 == Runtime Usage
 
 Leverage Playwright for screen scraping or other browser tasks in your runtime application, including support for GraalVM native compilation.

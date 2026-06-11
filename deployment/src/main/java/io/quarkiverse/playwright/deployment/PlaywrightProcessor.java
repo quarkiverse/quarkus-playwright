@@ -1,14 +1,20 @@
 package io.quarkiverse.playwright.deployment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
+import org.testcontainers.Testcontainers;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.ElementHandle;
@@ -27,8 +33,12 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
+import io.quarkus.deployment.builditem.CuratedApplicationShutdownBuildItem;
+import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
+import io.quarkus.deployment.builditem.DockerStatusBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
+import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.NativeImageEnableAllCharsetsBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourcePatternsBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
@@ -37,6 +47,10 @@ import io.quarkus.logging.Log;
 class PlaywrightProcessor {
 
     private static final String FEATURE = "playwright";
+    private static final String PLAYWRIGHT_ENDPOINT_CONFIG = "quarkus.playwright.endpoint";
+
+    private static volatile DevServicesResultBuildItem.RunningDevService runningDevService;
+    private static volatile PlaywrightServerContainer.PlaywrightDevServiceConfiguration capturedDevServiceConfiguration;
 
     @BuildStep
     FeatureBuildItem feature() {
@@ -206,6 +220,68 @@ class PlaywrightProcessor {
         recorder.initialize();
     }
 
+    @BuildStep(onlyIfNot = IsNormal.class)
+    DevServicesResultBuildItem startPlaywrightDevService(
+            LaunchModeBuildItem launchMode,
+            DockerStatusBuildItem dockerStatus,
+            PlaywrightBuildTimeConfig config,
+            CuratedApplicationShutdownBuildItem shutdown) {
+        if (!config.devservices().enabled()) {
+            return null;
+        }
+
+        if (StringUtils
+                .isNotBlank(ConfigProvider.getConfig().getOptionalValue(PLAYWRIGHT_ENDPOINT_CONFIG, String.class).orElse(""))) {
+            Log.debugf("Not starting Playwright Dev Services because '%s' is already configured", PLAYWRIGHT_ENDPOINT_CONFIG);
+            return null;
+        }
+
+        if (!dockerStatus.isContainerRuntimeAvailable()) {
+            Log.warn("Docker is not available, Playwright Dev Services will not start");
+            return null;
+        }
+
+        final PlaywrightServerContainer.PlaywrightDevServiceConfiguration currentConfiguration = new PlaywrightServerContainer.PlaywrightDevServiceConfiguration(
+                config.devservices().imageName(),
+                config.devservices().verbose(),
+                config.devservices().sharedNetwork());
+
+        if (runningDevService != null && Objects.equals(currentConfiguration, capturedDevServiceConfiguration)) {
+            return runningDevService.toBuildItem();
+        }
+
+        closeRunningDevService();
+
+        if (currentConfiguration.sharedNetwork()) {
+            final int httpTestPort = ConfigProvider.getConfig()
+                    .getOptionalValue("quarkus.http.test-port", Integer.class)
+                    .orElse(8081);
+            Testcontainers.exposeHostPorts(httpTestPort);
+        }
+
+        final PlaywrightServerContainer container = new PlaywrightServerContainer(currentConfiguration);
+        container.start();
+
+        final String endpoint = String.format("ws://%s:%d/", container.getHost(),
+                container.getMappedPort(PlaywrightServerContainer.PLAYWRIGHT_SERVER_PORT));
+        final Map<String, String> devServiceConfig = Map.of(PLAYWRIGHT_ENDPOINT_CONFIG, endpoint);
+
+        runningDevService = new DevServicesResultBuildItem.RunningDevService(
+                FEATURE,
+                "Playwright browser server",
+                container.getContainerId(),
+                container::stop,
+                devServiceConfig);
+        capturedDevServiceConfiguration = currentConfiguration;
+
+        if (shutdown != null) {
+            shutdown.addCloseTask(PlaywrightProcessor::closeRunningDevService, true);
+        }
+        Log.infof("Playwright Dev Services started at %s using image %s", endpoint, config.devservices().imageName());
+
+        return runningDevService.toBuildItem();
+    }
+
     @BuildStep(onlyIf = IsNormal.class)
     void registerNativeDrivers(BuildProducer<NativeImageResourcePatternsBuildItem> nativeImageResourcePatterns) {
         final NativeImageResourcePatternsBuildItem.Builder builder = NativeImageResourcePatternsBuildItem.builder();
@@ -239,4 +315,17 @@ class PlaywrightProcessor {
         Log.debugf("Implementors: %s", classes);
         return new ArrayList<>(classes);
     }
+
+    private static synchronized void closeRunningDevService() {
+        if (runningDevService != null) {
+            try {
+                runningDevService.close();
+            } catch (IOException e) {
+                Log.debug("Failed to stop Playwright Dev Services container", e);
+            }
+            runningDevService = null;
+            capturedDevServiceConfiguration = null;
+        }
+    }
+
 }

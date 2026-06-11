@@ -72,6 +72,25 @@ public class WithDefaultPlaywrightTest {
 
 Use the annotation `@WithPlaywright()` to change the browser (Chromium, Firefox, Webkit), headless, enable debug, logs and other options.
 
+You can also connect to a remote Playwright browser server instead of launching a local browser:
+
+```properties
+quarkus.playwright.endpoint=ws://localhost:3000/
+```
+
+To have Quarkus start a Playwright container automatically in dev/test, enable Dev Services:
+
+```properties
+quarkus.playwright.devservices.enabled=true
+# optional, defaults to mcr.microsoft.com/playwright:v1.60.0-noble
+quarkus.playwright.devservices.image-name=mcr.microsoft.com/playwright:v1.60.0-noble
+# optional, defaults to false, enable verbose logging. Logging will be redirected to the
+# Quarkus logging as the container is stopped after execution
+quarkus.playwright.devservices.verbose=true
+```
+
+When Dev Services is enabled, `quarkus.playwright.endpoint` is derived automatically from the started container.
+
 Debug your tests with the Playwright inspector `@WithPlaywright(debug=true)`:
 
 ![Debug](https://github.com/quarkiverse/quarkus-playwright/blob/main/docs/modules/ROOT/assets/images/playwright-debug.gif)
