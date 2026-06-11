@@ -63,6 +63,9 @@ class PlaywrightProcessor {
         classNames.add("com.microsoft.playwright.impl.SerializedArgument");
         classNames.add("com.microsoft.playwright.impl.SerializedValue");
         classNames.add("com.microsoft.playwright.impl.SerializedValue$O");
+        classNames.add("com.microsoft.playwright.impl.SerializedError");
+        classNames.add("com.microsoft.playwright.impl.SerializedError$Error");
+        classNames.add("com.microsoft.playwright.options.WebErrorLocation");
         classNames.add(Browser.CloseOptions.class.getName());
         classNames.add(Browser.NewContextOptions.class.getName());
         classNames.add(Browser.NewPageOptions.class.getName());
