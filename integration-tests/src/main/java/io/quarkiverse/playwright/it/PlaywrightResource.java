@@ -104,4 +104,38 @@ public class PlaywrightResource {
         }
         return ariaSnapshot;
     }
+
+    /**
+     * Endpoint to take a screenshot using multiple browser types
+     */
+    @GET
+    @Path("/screenshot")
+    public String multiBrowserScreenshot() {
+        final Map<String, String> env = new HashMap<>(System.getenv());
+        env.put("DEBUG", "pw:api");
+        final BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
+                .setHeadless(true)
+                .setChromiumSandbox(false)
+                .setChannel("")
+                .setArgs(List.of("--disable-gpu"));
+
+        try (Playwright playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env))) {
+            List<BrowserType> browserTypes = List.of(
+                    playwright.chromium(),
+                    playwright.webkit(),
+                    playwright.firefox());
+
+            for (BrowserType browserType : browserTypes) {
+                try (Browser browser = browserType.launch(launchOptions)) {
+                    final com.microsoft.playwright.BrowserContext context = browser.newContext();
+                    final Page page = context.newPage();
+                    page.navigate("https://playwright.dev/");
+                    java.nio.file.Path screenshotPath = java.nio.file.Paths
+                            .get("target/screenshot-" + browserType.name() + ".png");
+                    page.screenshot(new Page.ScreenshotOptions().setPath(screenshotPath));
+                }
+            }
+        }
+        return "Screenshots taken";
+    }
 }
