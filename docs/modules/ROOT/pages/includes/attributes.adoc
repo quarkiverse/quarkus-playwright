@@ -1,4 +1,4 @@
-:project-version: 2.3.5
+:project-version: 2.3.7
 
 :examples-dir: ./../examples/
 :runtime-dir: ./../../../../runtime
