@@ -35,6 +35,17 @@ public interface PlaywrightAdapter {
     };
 
     /**
+     * Adapts the connect options for the Playwright browser. This method can be overridden to modify the default connect
+     * options
+     * used when connecting to a browser instance.
+     *
+     * @param connectOptions The connect options to be adapted before connecting to the browser.
+     */
+    default BrowserType.ConnectOptions adaptConnectOptions(BrowserType.ConnectOptions connectOptions) {
+        return connectOptions;
+    }
+
+    /**
      * Adapts the options for creating a new browser context. This method can be overridden to modify the default context
      * options
      * used when creating a new browser context. For example, you can set viewport size, user agent, or configure other context
