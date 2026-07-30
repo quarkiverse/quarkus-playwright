@@ -13,22 +13,22 @@ import com.microsoft.playwright.Playwright;
 
 /**
  * A Testcontainers implementation for running a Playwright server in a Docker container.
- *
+ * <p>
  * This container extends GenericContainer to provide a containerized Playwright server
  * that listens on port 3000 and can be used for browser automation testing. The npx-installed
  * playwright CLI version is pinned to the version of the com.microsoft.playwright:playwright
  * client library on the classpath (read from its jar manifest), since the server and client
  * must run matching Playwright versions regardless of which Docker image is configured.
- *
+ * <p>
  * The container supports configuration options including:
  * - Custom Docker image selection
  * - Verbose mode for debugging with Playwright API logs
  * - Shared network configuration for container networking
- *
+ * <p>
  * When verbose mode is enabled, the container will output both stdout and stderr logs
  * to the configured logger, with stdout logged at INFO level and stderr at ERROR level.
  * Debug output from Playwright's internal API (pw:api) is also enabled in verbose mode.
- *
+ * <p>
  * The container exposes the Playwright server on port 3000 and uses a listening port
  * wait strategy to ensure the server is ready before proceeding with tests.
  */
@@ -78,7 +78,7 @@ class PlaywrightServerContainer extends GenericContainer<PlaywrightServerContain
                             + "version mismatch");
             npxPackage = "playwright";
         }
-        return "npx -y " + npxPackage + " run-server --host 0.0.0.0 --port " + PLAYWRIGHT_SERVER_PORT;
+        return "npx -y " + npxPackage + " run-server --host 0.0.0.0 --port " + PLAYWRIGHT_SERVER_PORT + " --unsafe";
     }
 
     @Override
