@@ -3,10 +3,12 @@ package io.quarkiverse.playwright;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -183,7 +185,9 @@ public class QuarkusPlaywrightManager
 
         if (StringUtils.isNotBlank(endpoint)) {
             final BrowserType.ConnectOptions connectOptions = adapter.adaptConnectOptions(
-                    new BrowserType.ConnectOptions().setSlowMo(this.options.slowMo()));
+                    new BrowserType.ConnectOptions()
+                            .setSlowMo(this.options.slowMo())
+                            .setHeaders(remoteLaunchOptionsHeaders()));
             return browserType.connect(endpoint, connectOptions);
         }
 
@@ -197,6 +201,32 @@ public class QuarkusPlaywrightManager
                         .setEnv(env)
                         .setArgs(Arrays.asList(this.options.args())));
         return browserType.launch(launchOptions);
+    }
+
+    /**
+     * Maps the subset of {@link WithPlaywright} launch options that a remote Playwright
+     * server (Dev Service, {@code run-server --unsafe}) actually accepts into the
+     * {@code x-playwright-launch-options} connect header, mirroring what the local-launch
+     * branch above sets directly on {@link LaunchOptions}. {@code env} has no remote
+     * equivalent — the server process is already running with its own environment before a
+     * client ever connects — so it's only applied to a locally-launched browser.
+     */
+    private Map<String, String> remoteLaunchOptionsHeaders() {
+        JsonArrayBuilder argsBuilder = Json.createArrayBuilder();
+        Arrays.stream(this.options.args()).forEach(argsBuilder::add);
+
+        JsonObjectBuilder launchOptionsBuilder = Json.createObjectBuilder()
+                .add("args", argsBuilder.build())
+                .add("headless", this.options.headless())
+                .add("chromiumSandbox", this.options.chromiumSandbox());
+        if (StringUtils.isNotBlank(this.options.channel())) {
+            launchOptionsBuilder.add("channel", this.options.channel());
+        }
+        JsonObject launchOptions = launchOptionsBuilder.build();
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-playwright-launch-options", launchOptions.toString());
+        return headers;
     }
 
     private static void applyBrowserContextConfig(NewContextOptions contextOptions, BrowserContextConfig config) {
