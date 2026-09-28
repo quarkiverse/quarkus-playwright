@@ -1,5 +1,6 @@
 package io.quarkiverse.playwright.deployment;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,7 +50,8 @@ class PlaywrightProcessor {
     private static final String FEATURE = "playwright";
     private static final String PLAYWRIGHT_ENDPOINT_CONFIG = "quarkus.playwright.endpoint";
 
-    private static volatile DevServicesResultBuildItem.RunningDevService runningDevService;
+    private static volatile Closeable runningDevService;
+    private static volatile DevServicesResultBuildItem runningDevServiceItem;
     private static volatile PlaywrightServerContainer.PlaywrightDevServiceConfiguration capturedDevServiceConfiguration;
 
     @BuildStep
@@ -247,7 +249,7 @@ class PlaywrightProcessor {
                 config.devservices().sharedNetwork());
 
         if (runningDevService != null && Objects.equals(currentConfiguration, capturedDevServiceConfiguration)) {
-            return runningDevService.toBuildItem();
+            return runningDevServiceItem;
         }
 
         closeRunningDevService();
@@ -266,12 +268,13 @@ class PlaywrightProcessor {
                 container.getMappedPort(PlaywrightServerContainer.PLAYWRIGHT_SERVER_PORT));
         final Map<String, String> devServiceConfig = Map.of(PLAYWRIGHT_ENDPOINT_CONFIG, endpoint);
 
-        runningDevService = new DevServicesResultBuildItem.RunningDevService(
-                FEATURE,
-                "Playwright browser server",
-                container.getContainerId(),
-                container::stop,
-                devServiceConfig);
+        runningDevService = container::stop;
+        runningDevServiceItem = DevServicesResultBuildItem.discovered()
+                .name(FEATURE)
+                .description("Playwright browser server")
+                .containerId(container.getContainerId())
+                .config(devServiceConfig)
+                .build();
         capturedDevServiceConfiguration = currentConfiguration;
 
         if (shutdown != null) {
@@ -279,7 +282,7 @@ class PlaywrightProcessor {
         }
         Log.infof("Playwright Dev Services started at %s using image %s", endpoint, config.devservices().imageName());
 
-        return runningDevService.toBuildItem();
+        return runningDevServiceItem;
     }
 
     @BuildStep(onlyIf = IsNormal.class)
@@ -324,6 +327,7 @@ class PlaywrightProcessor {
                 Log.debug("Failed to stop Playwright Dev Services container", e);
             }
             runningDevService = null;
+            runningDevServiceItem = null;
             capturedDevServiceConfiguration = null;
         }
     }
