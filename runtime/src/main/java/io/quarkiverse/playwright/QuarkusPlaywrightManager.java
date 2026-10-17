@@ -11,6 +11,8 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Browser.NewContextOptions;
@@ -82,6 +84,14 @@ public class QuarkusPlaywrightManager
     private Browser playwrightBrowser;
 
     /**
+     * Launch settings resolved from {@link WithPlaywright}, overridden by {@code quarkus.playwright.*} config when set.
+     */
+    private WithPlaywright.Browser browser;
+    private boolean headless;
+    private String channel;
+    private double slowMo;
+
+    /**
      * Initializes the Playwright manager with configuration from
      * {@link WithPlaywright}.
      *
@@ -90,6 +100,53 @@ public class QuarkusPlaywrightManager
     @Override
     public void init(WithPlaywright withPlaywright) {
         this.options = withPlaywright;
+    }
+
+    /**
+     * Resolves the launch settings. Config properties win over the annotation so a whole test run can be switched
+     * (for example to another browser) without touching the test classes.
+     * <p>
+     * Plain config lookups are used on purpose: {@code @ConfigMapping} classes are not available yet when test
+     * resources are started.
+     * </p>
+     */
+    void resolveOptions() {
+        final Config config = ConfigProvider.getConfig();
+        this.browser = config.getOptionalValue("quarkus.playwright.browser", String.class)
+                .filter(StringUtils::isNotBlank)
+                .map(QuarkusPlaywrightManager::parseBrowser)
+                .orElse(this.options.browser());
+        this.headless = config.getOptionalValue("quarkus.playwright.headless", Boolean.class)
+                .orElse(this.options.headless());
+        this.channel = config.getOptionalValue("quarkus.playwright.channel", String.class)
+                .orElse(this.options.channel());
+        this.slowMo = config.getOptionalValue("quarkus.playwright.slow-mo", Double.class)
+                .orElse(this.options.slowMo());
+    }
+
+    WithPlaywright.Browser browser() {
+        return browser;
+    }
+
+    boolean headless() {
+        return headless;
+    }
+
+    String channel() {
+        return channel;
+    }
+
+    double slowMo() {
+        return slowMo;
+    }
+
+    static WithPlaywright.Browser parseBrowser(String value) {
+        try {
+            return WithPlaywright.Browser.valueOf(value.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid value for quarkus.playwright.browser: '" + value
+                    + "'. Expected one of " + Arrays.toString(WithPlaywright.Browser.values()), e);
+        }
     }
 
     /**
@@ -114,6 +171,8 @@ public class QuarkusPlaywrightManager
      */
     @Override
     public Map<String, String> start() {
+        resolveOptions();
+
         final Map<String, String> env = new HashMap<>(System.getenv());
 
         // Enable Playwright verbose logging if requested
@@ -180,13 +239,13 @@ public class QuarkusPlaywrightManager
     }
 
     private Browser startBrowser(PlaywrightAdapter adapter, Map<String, String> env) {
-        final BrowserType browserType = browser(playwright, this.options.browser());
+        final BrowserType browserType = browser(playwright, this.browser);
         final String endpoint = resolveEndpoint();
 
         if (StringUtils.isNotBlank(endpoint)) {
             final BrowserType.ConnectOptions connectOptions = adapter.adaptConnectOptions(
                     new BrowserType.ConnectOptions()
-                            .setSlowMo(this.options.slowMo())
+                            .setSlowMo(this.slowMo)
                             .setHeaders(remoteLaunchOptionsHeaders()));
             return browserType.connect(endpoint, connectOptions);
         }
@@ -194,10 +253,10 @@ public class QuarkusPlaywrightManager
         // No endpoint configured, so launch a local browser process.
         final LaunchOptions launchOptions = adapter.adaptLaunchOptions(
                 new LaunchOptions()
-                        .setChannel(this.options.channel())
+                        .setChannel(this.channel)
                         .setChromiumSandbox(this.options.chromiumSandbox())
-                        .setHeadless(this.options.headless())
-                        .setSlowMo(this.options.slowMo())
+                        .setHeadless(this.headless)
+                        .setSlowMo(this.slowMo)
                         .setEnv(env)
                         .setArgs(Arrays.asList(this.options.args())));
         return browserType.launch(launchOptions);
@@ -217,10 +276,10 @@ public class QuarkusPlaywrightManager
 
         JsonObjectBuilder launchOptionsBuilder = Json.createObjectBuilder()
                 .add("args", argsBuilder.build())
-                .add("headless", this.options.headless())
+                .add("headless", this.headless)
                 .add("chromiumSandbox", this.options.chromiumSandbox());
-        if (StringUtils.isNotBlank(this.options.channel())) {
-            launchOptionsBuilder.add("channel", this.options.channel());
+        if (StringUtils.isNotBlank(this.channel)) {
+            launchOptionsBuilder.add("channel", this.channel);
         }
         JsonObject launchOptions = launchOptionsBuilder.build();
 

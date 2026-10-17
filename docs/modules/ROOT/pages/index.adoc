@@ -108,6 +108,33 @@ public class WithSelectorsPlaywrightTest {
 }
 ----
 
+=== Overriding options with configuration
+
+Some `@WithPlaywright` launch options can also be set as configuration properties. When a property is set it takes
+precedence over the annotation, so you can switch a whole test run without touching the test classes:
+
+[source,bash]
+----
+# Run every Playwright test with Firefox
+./mvnw test -Dquarkus.playwright.browser=firefox
+
+# Watch the browser locally, slowed down
+./mvnw test -Dquarkus.playwright.headless=false -Dquarkus.playwright.slow-mo=500
+----
+
+[cols="1,1,2"]
+|===
+|Property |Annotation attribute |Values
+
+|`quarkus.playwright.browser` |`browser` |`chromium`, `firefox`, `webkit`
+|`quarkus.playwright.headless` |`headless` |`true`, `false`
+|`quarkus.playwright.channel` |`channel` |e.g. `chrome`, `msedge`
+|`quarkus.playwright.slow-mo` |`slowMo` |milliseconds
+|===
+
+The properties can also go in `application.properties` (for example `%test.quarkus.playwright.browser=firefox`) or
+environment variables such as `QUARKUS_PLAYWRIGHT_BROWSER`.
+
 === Custom Playwright configuration
 
 Use `@WithPlaywright(playwrightAdapter = ...)` when you need to adapt low-level Playwright options globally for a test class, where the default options provided by the `@WithPlaywright` annotation are not sufficient. This allows you to customize the Playwright configuration at various stages of the browser and context creation process.
