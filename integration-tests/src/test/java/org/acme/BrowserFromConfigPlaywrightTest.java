@@ -2,8 +2,6 @@ package org.acme;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 
 import com.microsoft.playwright.Browser;
@@ -15,7 +13,8 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 
 /**
- * The annotation asks for the default browser (Chromium), but {@code quarkus.playwright.browser} wins.
+ * The annotation asks for the default browser (Chromium), but {@code quarkus.playwright.browser} from a profiled
+ * entry in {@code application.properties} wins. This checks the property is visible when the test resource starts.
  */
 @QuarkusTest
 @WithPlaywright
@@ -24,8 +23,8 @@ public class BrowserFromConfigPlaywrightTest {
 
     public static class FirefoxProfile implements QuarkusTestProfile {
         @Override
-        public Map<String, String> getConfigOverrides() {
-            return Map.of("quarkus.playwright.browser", "firefox");
+        public String getConfigProfile() {
+            return "browser-from-config";
         }
     }
 

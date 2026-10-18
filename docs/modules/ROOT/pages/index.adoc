@@ -133,7 +133,11 @@ precedence over the annotation, so you can switch a whole test run without touch
 |===
 
 The properties can also go in `application.properties` (for example `%test.quarkus.playwright.browser=firefox`) or
-environment variables such as `QUARKUS_PLAYWRIGHT_BROWSER`.
+environment variables such as `QUARKUS_PLAYWRIGHT_BROWSER`. Blank values are ignored, so the annotation value is used.
+
+NOTE: When tests connect to a remote Playwright server (Dev Services or `quarkus.playwright.endpoint`), the browser
+and channel must be installed on that server, the same as for the annotation attributes. Branded channels such as
+`chrome` or `msedge` are usually not available in the Playwright container image.
 
 === Custom Playwright configuration
 
