@@ -31,7 +31,7 @@ public class PlaywrightResourceTest {
                 .then()
                 .statusCode(200)
                 // If Aria did snapshot in AI Mode then the iframe contents will be included
-                .body(containsString("OpenStreetMap contributors"));
+                .body(containsString("Content inside the frame"));
     }
 
     @Test

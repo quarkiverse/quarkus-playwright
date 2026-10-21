@@ -94,8 +94,8 @@ public class PlaywrightResource {
         try (Playwright playwright = Playwright.create(new Playwright.CreateOptions().setEnv(env))) {
             try (Browser browser = playwright.chromium().launch(launchOptions)) {
                 Page page = browser.newPage();
-                page.navigate("https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe");
-                page.waitForSelector("interactive-example iframe");
+                page.setContent("<iframe srcdoc=\"<p>Content inside the frame</p>\"></iframe>");
+                page.frameLocator("iframe").locator("p").waitFor();
                 Page.AriaSnapshotOptions ariaSnapshotOptions = new Page.AriaSnapshotOptions();
                 ariaSnapshotOptions.setMode(AriaSnapshotMode.AI);
                 ariaSnapshot = page.ariaSnapshot(ariaSnapshotOptions);
