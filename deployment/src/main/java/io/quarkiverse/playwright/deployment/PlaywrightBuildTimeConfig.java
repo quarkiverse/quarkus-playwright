@@ -17,7 +17,7 @@ public interface PlaywrightBuildTimeConfig {
 
     @ConfigGroup
     interface PlaywrightDevServicesConfig {
-        String DEFAULT_IMAGE = "mcr.microsoft.com/playwright:v1.63.0-resolute";
+        String DEFAULT_IMAGE = "mcr.microsoft.com/playwright:v1.64.0-resolute";
 
         /**
          * Starts a Playwright server container in dev and test modes.
