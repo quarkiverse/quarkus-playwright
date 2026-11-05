@@ -2,8 +2,6 @@ package org.acme;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.net.URL;
-
 import jakarta.ws.rs.core.HttpHeaders;
 
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +14,6 @@ import com.microsoft.playwright.Response;
 
 import io.quarkiverse.playwright.InjectPlaywright;
 import io.quarkiverse.playwright.WithPlaywright;
-import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -26,15 +23,12 @@ public class WithDefaultPlaywrightTest {
     @InjectPlaywright
     BrowserContext context;
 
-    @TestHTTPResource("/")
-    URL index;
-
     @Test
     public void testIndex() {
         final Page page = context.newPage();
         page.onRequest(r -> assertThat(r.headerValue(HttpHeaders.USER_AGENT)).isNotEqualTo("playwright-browser"));
 
-        Response response = page.navigate(index.toString());
+        Response response = page.navigate("/");
         Assertions.assertEquals("OK", response.statusText());
 
         page.waitForLoadState();

@@ -39,14 +39,10 @@ public class WithDefaultPlaywrightTest {
     @InjectPlaywright
     BrowserContext context;
 
-    @TestHTTPResource("/")
-
-    URL index;
-
     @Test
     public void testIndex() {
         final Page page = context.newPage();
-        Response response = page.navigate(index.toString());
+        Response response = page.navigate("/");
         Assertions.assertEquals("OK", response.statusText());
 
         page.waitForLoadState();
@@ -61,6 +57,11 @@ public class WithDefaultPlaywrightTest {
     }
 }
 ----
+
+The injected `BrowserContext` is created with its base URL set to the URL of the application under test
+(the same URL `@TestHTTPResource` would give you, including a random test port), so you can navigate with relative paths
+such as `page.navigate("/")`. Absolute URLs are not affected. The base URL can be changed through a custom
+`PlaywrightAdapter#adaptNewContextOptions`.
 
 Use the annotation `@WithPlaywright()` to change the browser (Chromium, Firefox, Webkit), headless, enable debug, logs, and other options.
 
@@ -224,8 +225,8 @@ When enabled:
 * The Playwright container is attached to a shared Testcontainers Docker network.
 * The host's `quarkus.http.test-port` (defaults to `8081`) is exposed to that network via
   `host.testcontainers.internal`.
-* From within your test, you can navigate Playwright to the application under test using
-  `http://host.testcontainers.internal:<quarkus.http.test-port>/`.
+* The injected `BrowserContext` base URL points at `http://host.testcontainers.internal:<quarkus.http.test-port>/`,
+  so relative navigation such as `page.navigate("/")` reaches the application under test.
 
 [source, java]
 ----
@@ -239,7 +240,7 @@ public class HostConnectionTest {
     @Test
     public void testIndex() {
         final Page page = context.newPage();
-        Response response = page.navigate("http://host.testcontainers.internal:8081/");
+        Response response = page.navigate("/");
         Assertions.assertEquals("OK", response.statusText());
     }
 }
