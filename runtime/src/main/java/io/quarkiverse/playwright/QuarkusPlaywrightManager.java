@@ -1,6 +1,8 @@
 package io.quarkiverse.playwright;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
@@ -22,6 +24,7 @@ import com.microsoft.playwright.Playwright;
 
 import io.quarkus.test.common.DevServicesContext;
 import io.quarkus.test.common.QuarkusTestResourceConfigurableLifecycleManager;
+import io.quarkus.test.common.http.TestHTTPResourceManager;
 
 /**
  * Manages the lifecycle of a Playwright instance in Quarkus tests.
@@ -56,6 +59,14 @@ public class QuarkusPlaywrightManager
     }
 
     /**
+     * Hostname that resolves to the host machine from inside a Testcontainers container attached to the shared
+     * network (see {@code quarkus.playwright.devservices.shared-network}).
+     */
+    static final String TESTCONTAINERS_HOST = "host.testcontainers.internal";
+
+    private static final String SHARED_NETWORK_CONFIG = "quarkus.playwright.devservices.shared-network";
+
+    /**
      * Holds the configuration options from the {@link WithPlaywright} annotation.
      */
     private WithPlaywright options;
@@ -86,6 +97,16 @@ public class QuarkusPlaywrightManager
      * Launch settings resolved once from {@link #options} and {@code quarkus.playwright.*} config.
      */
     private LaunchSettings launch;
+
+    /**
+     * The adapter used to customise Playwright options, kept so the browser context can be created lazily.
+     */
+    private PlaywrightAdapter adapter;
+
+    /**
+     * Whether the browser runs in a remote Playwright server (Dev Services or {@code quarkus.playwright.endpoint}).
+     */
+    private boolean remoteBrowser;
 
     /**
      * Initializes the Playwright manager with configuration from
@@ -132,9 +153,8 @@ public class QuarkusPlaywrightManager
             env.put("PWDEBUG", "1");
         }
 
-        PlaywrightAdapter adapter;
         try {
-            adapter = this.options.playwrightAdapter().getDeclaredConstructor().newInstance();
+            this.adapter = this.options.playwrightAdapter().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException("Adapter class cannot be created", e);
         }
@@ -154,19 +174,66 @@ public class QuarkusPlaywrightManager
 
         this.playwrightBrowser = startBrowser(adapter, env);
 
-        // Configure the context, setting the video directory if specified
+        // The browser context is created lazily in inject(), once the application under test is running and its
+        // HTTP URL (which may use a random port) is known, so it can be used as the context's base URL.
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Creates the browser context, using the URL of the application under test as its base URL so tests can
+     * navigate with relative paths such as {@code page.navigate("/")}.
+     */
+    private BrowserContext createBrowserContext() {
         final Browser.NewContextOptions contextOptions = new Browser.NewContextOptions();
+
+        final String baseUrl = resolveBaseUrl();
+        if (StringUtils.isNotBlank(baseUrl)) {
+            contextOptions.setBaseURL(baseUrl);
+        }
+
+        // Configure the context, setting the video directory if specified
         if (StringUtils.isNotBlank(this.options.recordVideoDir())) {
             contextOptions.setRecordVideoDir(Paths.get(this.options.recordVideoDir()));
         }
 
         applyBrowserContextConfig(contextOptions, this.options.browserContext());
 
-        this.playwrightContext = playwrightBrowser.newContext(adapter.adaptNewContextOptions(contextOptions));
+        final BrowserContext context = playwrightBrowser.newContext(adapter.adaptNewContextOptions(contextOptions));
+        applyConfig(context);
+        return context;
+    }
 
-        applyConfig();
+    /**
+     * Resolves the base URL of the application under test, or {@code null} if it is not available.
+     */
+    protected String resolveBaseUrl() {
+        final String testUrl;
+        try {
+            testUrl = TestHTTPResourceManager.getUri();
+        } catch (RuntimeException e) {
+            // The application under test has no HTTP URL, so there is no base URL to apply
+            return null;
+        }
+        final boolean sharedNetwork = this.remoteBrowser && ConfigProvider.getConfig()
+                .getOptionalValue(SHARED_NETWORK_CONFIG, Boolean.class).orElse(false);
+        return baseUrl(testUrl, sharedNetwork);
+    }
 
-        return Collections.emptyMap();
+    /**
+     * Computes the browser context base URL from the application's test URL. When the browser runs in a container
+     * on the Testcontainers shared network, the host machine is only reachable as {@value #TESTCONTAINERS_HOST}.
+     */
+    static String baseUrl(String testUrl, boolean sharedNetwork) {
+        if (StringUtils.isBlank(testUrl) || !sharedNetwork) {
+            return testUrl;
+        }
+        try {
+            final URI uri = new URI(testUrl);
+            return new URI(uri.getScheme(), uri.getUserInfo(), TESTCONTAINERS_HOST, uri.getPort(), uri.getPath(),
+                    uri.getQuery(), uri.getFragment()).toString();
+        } catch (URISyntaxException e) {
+            return testUrl;
+        }
     }
 
     @Override
@@ -191,6 +258,7 @@ public class QuarkusPlaywrightManager
         final String endpoint = resolveEndpoint();
 
         if (StringUtils.isNotBlank(endpoint)) {
+            this.remoteBrowser = true;
             final BrowserType.ConnectOptions connectOptions = adapter.adaptConnectOptions(
                     new BrowserType.ConnectOptions()
                             .setSlowMo(this.launch.slowMo())
@@ -254,17 +322,16 @@ public class QuarkusPlaywrightManager
         }
     }
 
-    private void applyConfig() {
+    private void applyConfig(BrowserContext context) {
         var browserContextConfig = this.options.browserContext();
 
         if (StringUtils.isNotBlank(browserContextConfig.defaultNavigationTimeout())) {
-            this.playwrightContext
-                    .setDefaultNavigationTimeout(
-                            Duration.parse(browserContextConfig.defaultNavigationTimeout()).toMillis());
+            context.setDefaultNavigationTimeout(
+                    Duration.parse(browserContextConfig.defaultNavigationTimeout()).toMillis());
         }
 
         if (StringUtils.isNotBlank(browserContextConfig.defaultTimeout())) {
-            this.playwrightContext.setDefaultTimeout(Duration.parse(browserContextConfig.defaultTimeout()).toMillis());
+            context.setDefaultTimeout(Duration.parse(browserContextConfig.defaultTimeout()).toMillis());
         }
     }
 
@@ -313,7 +380,11 @@ public class QuarkusPlaywrightManager
      */
     @Override
     public void inject(TestInjector testInjector) {
-        // Injects BrowserContextConfig if @InjectPlaywright is present on a matching
+        if (this.playwrightContext == null && this.playwrightBrowser != null) {
+            this.playwrightContext = createBrowserContext();
+        }
+
+        // Injects BrowserContext if @InjectPlaywright is present on a matching
         // field
         testInjector.injectIntoFields(playwrightContext,
                 new TestInjector.AnnotatedAndMatchesType(InjectPlaywright.class, BrowserContext.class));

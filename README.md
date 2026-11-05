@@ -48,13 +48,10 @@ public class WithDefaultPlaywrightTest {
     @InjectPlaywright
     BrowserContext context;
 
-    @TestHTTPResource("/")
-    URL index;
-
     @Test
     public void testIndex() {
         final Page page = context.newPage();
-        Response response = page.navigate(index.toString());
+        Response response = page.navigate("/");
         Assertions.assertEquals("OK", response.statusText());
 
         page.waitForLoadState();
