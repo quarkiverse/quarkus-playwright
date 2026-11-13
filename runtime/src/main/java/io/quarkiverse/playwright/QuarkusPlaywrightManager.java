@@ -23,8 +23,9 @@ import com.microsoft.playwright.BrowserType.LaunchOptions;
 import com.microsoft.playwright.Playwright;
 
 import io.quarkus.test.common.DevServicesContext;
+import io.quarkus.test.common.ListeningAddress;
 import io.quarkus.test.common.QuarkusTestResourceConfigurableLifecycleManager;
-import io.quarkus.test.common.http.TestHTTPResourceManager;
+import io.quarkus.value.registry.ValueRegistry;
 
 /**
  * Manages the lifecycle of a Playwright instance in Quarkus tests.
@@ -183,10 +184,10 @@ public class QuarkusPlaywrightManager
      * Creates the browser context, using the URL of the application under test as its base URL so tests can
      * navigate with relative paths such as {@code page.navigate("/")}.
      */
-    private BrowserContext createBrowserContext() {
+    private BrowserContext createBrowserContext(ValueRegistry valueRegistry) {
         final Browser.NewContextOptions contextOptions = new Browser.NewContextOptions();
 
-        final String baseUrl = resolveBaseUrl();
+        final String baseUrl = resolveBaseUrl(valueRegistry);
         if (StringUtils.isNotBlank(baseUrl)) {
             contextOptions.setBaseURL(baseUrl);
         }
@@ -206,14 +207,14 @@ public class QuarkusPlaywrightManager
     /**
      * Resolves the base URL of the application under test, or {@code null} if it is not available.
      */
-    protected String resolveBaseUrl() {
-        final String testUrl;
-        try {
-            testUrl = TestHTTPResourceManager.getUri();
-        } catch (RuntimeException e) {
+    protected String resolveBaseUrl(ValueRegistry valueRegistry) {
+        // registered by the HTTP server of the application under test, or by the launcher of integration tests
+        final URI localBaseUri = valueRegistry.getOrDefault(ListeningAddress.LOCAL_BASE_URI, null);
+        if (localBaseUri == null) {
             // The application under test has no HTTP URL, so there is no base URL to apply
             return null;
         }
+        final String testUrl = localBaseUri.toString();
         final boolean sharedNetwork = this.remoteBrowser && ConfigProvider.getConfig()
                 .getOptionalValue(SHARED_NETWORK_CONFIG, Boolean.class).orElse(false);
         return baseUrl(testUrl, sharedNetwork);
@@ -381,7 +382,7 @@ public class QuarkusPlaywrightManager
     @Override
     public void inject(TestInjector testInjector) {
         if (this.playwrightContext == null && this.playwrightBrowser != null) {
-            this.playwrightContext = createBrowserContext();
+            this.playwrightContext = createBrowserContext(testInjector.valueRegistry());
         }
 
         // Injects BrowserContext if @InjectPlaywright is present on a matching

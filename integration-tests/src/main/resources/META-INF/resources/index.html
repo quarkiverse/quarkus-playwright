@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Awesome App</title>
+    <style>
+        body {
+            background-color: beige;
+        }
+
+        .count {
+            font-size: 2rem;
+            color: darkslateblue;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div aria-live="polite" aria-atomic="true">
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="toast-title"></strong>
+            <small data-testid="greeting">/hello</small>
+        </div>
+        <div class="toast-body">
+        </div>
+    </div>
+</div>
+<script>
+    const title = document.querySelector('.toast-title');
+    const body = document.querySelector('.toast-body');
+
+    function endCountdown() {
+        fetch('/hello')
+            .then(response => response.text())
+            .then(data => {
+                title.textContent = 'RECEIVED DATA FROM QUARKUS API';
+                body.classList.add('received');
+                body.innerHTML = `<b>${data}</b>`;
+            });
+    }
+
+    let count = 5;
+
+    function handleTimer() {
+        if (count === 0) {
+            clearInterval(timer);
+            endCountdown();
+        } else {
+            title.textContent = 'CALLING QUARKUS API IN';
+            body.innerHTML = `<div class="count">${count}</div>`;
+            count--;
+        }
+    }
+
+    const timer = setInterval(handleTimer, 50);
+    handleTimer();
+</script>
+</body>
+</html>
