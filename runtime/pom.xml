@@ -20,6 +20,10 @@
             <artifactId>quarkus-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-devservices</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
         </dependency>
