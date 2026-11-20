@@ -23,7 +23,7 @@ Just add the dependency as `<scope>test</scope>` to your `pom.xml`:
 </dependency>
 <dependency>
     <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-junit5</artifactId>
+    <artifactId>quarkus-junit</artifactId>
     <scope>test</scope>
 </dependency>
 ----

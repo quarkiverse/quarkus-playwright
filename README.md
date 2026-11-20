@@ -35,7 +35,7 @@ Just add the dependency as `<scope>test</scope>` to pom.xml:
 </dependency>
 <dependency>
     <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-junit5</artifactId>
+    <artifactId>quarkus-junit</artifactId>
     <scope>test</scope>
 </dependency>
 ```
@@ -169,6 +169,15 @@ EXPOSE 8080
 USER 1001
 CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
 ```
+
+## Compatibility
+
+| Quarkus Playwright version | Quarkus version |
+| -------------------------- | --------------- |
+| 2.5.x                      | 3.40.0+         |
+| 4.x                        | 4.0.0+          |
+
+4.x targets Quarkus 4 and requires JDK 21. If you are still on Quarkus 3, stay on 2.5.x, which is maintained from the `2.x` branch.
 
 ## Contributors ✨
 
