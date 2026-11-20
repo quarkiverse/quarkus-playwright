@@ -175,9 +175,9 @@ CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
 | Quarkus Playwright version | Quarkus version |
 | -------------------------- | --------------- |
 | 2.5.x                      | 3.40.0+         |
-| 3.x                        | 4.0.0+          |
+| 4.x                        | 4.0.0+          |
 
-3.x targets Quarkus 4 and requires JDK 21. If you are still on Quarkus 3, stay on 2.5.x, which is maintained from the `2.x` branch.
+4.x targets Quarkus 4 and requires JDK 21. If you are still on Quarkus 3, stay on 2.5.x, which is maintained from the `2.x` branch.
 
 ## Contributors ✨
 
