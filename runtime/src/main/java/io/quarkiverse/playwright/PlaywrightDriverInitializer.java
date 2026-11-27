@@ -11,18 +11,21 @@ import org.jboss.logging.Logger;
 
 import com.microsoft.playwright.impl.driver.jar.DriverJar;
 
-import io.quarkus.runtime.annotations.Recorder;
-
 /**
- * A recorder for managing Playwright driver initialization.
+ * Manages Playwright driver initialization at runtime.
  * This class handles the setup of the Playwright driver by
  * loading the driver resources and creating a file system
  * for those resources.
+ * <p>
+ * It is invoked from a runtime service registered through the Quarkus
+ * {@code ServiceRegistrar} in the deployment processor.
  */
-@Recorder
-public class PlaywrightRecorder {
+public final class PlaywrightDriverInitializer {
 
-    private static final Logger log = Logger.getLogger(PlaywrightRecorder.class);
+    private static final Logger log = Logger.getLogger(PlaywrightDriverInitializer.class);
+
+    private PlaywrightDriverInitializer() {
+    }
 
     /**
      * Initializes the Playwright driver by obtaining its resource URI,
@@ -39,7 +42,7 @@ public class PlaywrightRecorder {
      * @throws RuntimeException if there is an error in URI syntax or
      *         during file system creation.
      */
-    public void initialize() {
+    public static void initialize() {
         try {
             // Retrieve the URI of the Playwright driver resources
             URI uri = DriverJar.getDriverResourceURI();

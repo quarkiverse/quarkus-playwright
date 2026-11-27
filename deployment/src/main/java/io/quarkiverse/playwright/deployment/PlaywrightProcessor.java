@@ -27,12 +27,12 @@ import com.microsoft.playwright.options.HttpHeader;
 import com.microsoft.playwright.options.Timing;
 import com.microsoft.playwright.options.ViewportSize;
 
-import io.quarkiverse.playwright.PlaywrightRecorder;
+import io.quarkiverse.playwright.PlaywrightDriverInitializer;
+import io.quarkus.core.Phase;
+import io.quarkus.core.deployment.service.ServiceRegistrar;
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.annotations.ExecutionTime;
-import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.CuratedApplicationShutdownBuildItem;
 import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
@@ -217,9 +217,10 @@ class PlaywrightProcessor {
     }
 
     @BuildStep(onlyIf = IsNormal.class)
-    @Record(ExecutionTime.RUNTIME_INIT)
-    void registerRuntimeDrivers(PlaywrightRecorder recorder) {
-        recorder.initialize();
+    void registerRuntimeDrivers(ServiceRegistrar reg) {
+        reg.forService("io.quarkiverse.playwright.driver")
+                .atPhase(Phase.INFRASTRUCTURE)
+                .onStart(ctx -> PlaywrightDriverInitializer.initialize());
     }
 
     @BuildStep(onlyIfNot = IsNormal.class)
